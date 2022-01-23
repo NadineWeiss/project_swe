@@ -3,10 +3,10 @@ package org.dhbw.swe.board;
 public enum FieldType {
 
     NEUTRAL,
-    BLACKINIT,
-    BLACKSTART,
-    BLACKEND,
-    BLACKTARGET,
+    BLUEINIT,
+    BLUESTART,
+    BLUEEND,
+    BLUETARGET,
     REDINIT,
     REDSTART,
     REDEND,
@@ -16,7 +16,7 @@ public enum FieldType {
     GREENEND,
     GREENTARGET,
     YELLOWINIT,
-    YELOWSTART,
+    YELLOWSTART,
     YELLOWEND,
     YELLOWTARGET
 
