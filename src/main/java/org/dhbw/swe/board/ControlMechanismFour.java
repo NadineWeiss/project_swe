@@ -3,6 +3,7 @@ package org.dhbw.swe.board;
 import org.dhbw.swe.game.Player;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -28,11 +29,27 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
         }
 
-        for (Node node : getCurrentPosition(player.getColor(), field)){
+        List<Node> currentPositions = getCurrentPosition(player.getColor(), field).stream()
+                .filter(x -> !x.getType().equals(getInitType(player.getColor())))
+                .collect(Collectors.toList());
+
+        Map<GamePieceInterface, Integer> result = new HashMap<>();
+
+        for (Node node : currentPositions){
+
+           int target = getTargetPosition(node, jump, player.getColor());
+
+           if (!currentPositions.stream()
+                   .map(x -> graph.four.indexOf(x))
+                   .anyMatch(x -> x == target)){
+
+               result.put(field.get(graph.four.indexOf(node)).gamePiece(), target);
+
+           }
 
         }
 
-        return null;
+        return result;
     }
 
     private FieldType getInitType(Color color){
@@ -114,15 +131,17 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
             if (currentNode.getType().equals(getEndType(color))){
 
+                currentNode = graph.four.get(currentNode.getSpecialEdge().getNode());
+
             } else {
 
-                currentNode = graph.four.get(currentNode.getEdges().get(0).getNode());
+                currentNode = graph.four.get(currentNode.getDefaultEdge().getNode());
 
             }
 
         }
 
-        return jump;
+        return graph.four.indexOf(currentNode);
     }
 
 }

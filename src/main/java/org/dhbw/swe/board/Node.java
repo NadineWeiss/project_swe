@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Node {
 
@@ -42,6 +43,18 @@ public class Node {
 
     public void setEdges(List<Edge> edges) {
         this.edges = edges;
+    }
+
+    public Edge getDefaultEdge(){
+
+        return edges.stream().filter(x -> x.isDefaultDir()).findFirst().get();
+
+    }
+
+    public Edge getSpecialEdge(){
+
+        return edges.stream().filter(x -> !x.isDefaultDir()).findFirst().get();
+
     }
 
     @Override
