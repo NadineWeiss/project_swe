@@ -7,9 +7,9 @@ public class Main {
 
     public static void main (String[] args){
 
-        // Graph.INSTANCE.four.stream().forEach(x -> System.out.println(x));
+        Graph.INSTANCE.four.stream().forEach(x -> System.out.println(x));
 
-        System.out.println(new ControlMechanismFour().dice());
+        //System.out.println(new ControlMechanismFour().dice());
 
     }
 

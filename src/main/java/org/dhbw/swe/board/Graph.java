@@ -22,14 +22,14 @@ public enum Graph {
         result.addAll(getInit());
 
         result.addAll(getQuarter(Color.RED, 0, 16, 56));
-        result.addAll(getQuarter(Color.BLUE, 90, 30, 60));
+        result.addAll(getQuarter(Color.YELLOW, 90, 30, 60));
         result.addAll(getQuarter(Color.GREEN, 180, 44, 64));
-        result.addAll(getQuarter(Color.YELLOW, 270, 58, 68));
+        result.addAll(getQuarter(Color.BLUE, 270, 58, 68));
 
         result.addAll(getTarget(Color.RED, 0,  56));
-        result.addAll(getTarget(Color.BLUE, 90, 60));
+        result.addAll(getTarget(Color.YELLOW, 90, 60));
         result.addAll(getTarget(Color.GREEN, 180, 64));
-        result.addAll(getTarget(Color.YELLOW, 270, 68));
+        result.addAll(getTarget(Color.BLUE, 270, 68));
 
         return result;
     }
@@ -38,19 +38,18 @@ public enum Graph {
 
         List<Node> result = new ArrayList<>();
 
-        //Nodes except the target
         List<Edge> edges = new ArrayList<>();
-        edges.add(new Edge(startEnd + 1, rotateDir(Direction.RIGHT, rotation)));
+        edges.add(new Edge(startEnd + 1, rotateDir(Direction.RIGHT, rotation), true));
         for(int i = 0; i < 4; i++) {
-            edges.add(new Edge(startEnd + i + 2, rotateDir(Direction.DOWN, rotation)));
+            edges.add(new Edge(startEnd + i + 2, rotateDir(Direction.DOWN, rotation), true));
         }
         for(int i = 0; i < 4; i++) {
-            edges.add(new Edge(startEnd + i + 6, rotateDir(Direction.RIGHT, rotation)));
+            edges.add(new Edge(startEnd + i + 6, rotateDir(Direction.RIGHT, rotation), true));
         }
         if(rotation == 270){
-            edges.add(new Edge(16, rotateDir(Direction.DOWN, rotation)));
+            edges.add(new Edge(16, rotateDir(Direction.DOWN, rotation), true));
         }else{
-            edges.add(new Edge(startEnd + 10, rotateDir(Direction.DOWN, rotation)));
+            edges.add(new Edge(startEnd + 10, rotateDir(Direction.DOWN, rotation), true));
         }
 
         for(Edge edge : edges){
@@ -59,7 +58,7 @@ public enum Graph {
         result.get(0).setType(getEndType(color));
         result.get(1).setType(getStartType(color));
 
-        result.get(0).addEdge(new Edge(startTarget, rotateDir(Direction.DOWN, rotation)));
+        result.get(0).addEdge(new Edge(startTarget, rotateDir(Direction.DOWN, rotation), false));
 
         return result;
 
@@ -70,11 +69,11 @@ public enum Graph {
         List<Node> result = new ArrayList<>();
 
         result.add(new Node(getTargetType(color), Arrays.asList(
-                new Edge(startTarget + 1, rotateDir(Direction.DOWN, rotation)))));
+                new Edge(startTarget + 1, rotateDir(Direction.DOWN, rotation), false))));
         result.add(new Node(getTargetType(color), Arrays.asList(
-                new Edge(startTarget + 2, rotateDir(Direction.DOWN, rotation)))));
+                new Edge(startTarget + 2, rotateDir(Direction.DOWN, rotation), false))));
         result.add(new Node(getTargetType(color), Arrays.asList(
-                new Edge(startTarget + 3, rotateDir(Direction.DOWN, rotation)))));
+                new Edge(startTarget + 3, rotateDir(Direction.DOWN, rotation), false))));
         result.add(new Node(getTargetType(color), new ArrayList<>()));
 
         return result;
@@ -85,7 +84,7 @@ public enum Graph {
 
         List<Node> result = new ArrayList<>();
 
-        List<Color> colors = Arrays.asList(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW);
+        List<Color> colors = Arrays.asList(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
         colors.stream().forEach(color -> {
             for(int i = 0; i < 4; i++){
                 result.add(new Node(getInitType(color), new ArrayList<>()));

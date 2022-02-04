@@ -6,10 +6,12 @@ public class Edge {
 
     private int node;
     private Direction direction;
+    private boolean defaultDir;
 
-    public Edge(int node, Direction direction) {
+    public Edge(int node, Direction direction, boolean defaultDir) {
         this.node = node;
         this.direction = direction;
+        this.defaultDir = defaultDir;
     }
 
     public int getNode() {
@@ -26,6 +28,14 @@ public class Edge {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public boolean isDefaultDir() {
+        return defaultDir;
+    }
+
+    public void setDefaultDir(boolean defaultDir) {
+        this.defaultDir = defaultDir;
     }
 
     @Override
@@ -46,6 +56,7 @@ public class Edge {
         return "Edge{" +
                 "node=" + node +
                 ", direction=" + direction +
+                ", defaultDir=" + defaultDir +
                 '}';
     }
 }
