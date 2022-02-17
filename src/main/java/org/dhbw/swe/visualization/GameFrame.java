@@ -199,13 +199,13 @@ public class GameFrame extends JFrame {
 
     public void setGamePieces(List<FieldInterface> fields) {
 
-     /*   btns.stream().forEach(x -> x.removePiece());
+        btns.stream().forEach(x -> x.removePiece());
 
         fields.stream().filter(x -> x.getGamePiece() != null).forEach(x -> {
 
             btns.get(fields.indexOf(x)).setPiece(x.getGamePiece().color());
 
-        }); */
+        });
 
     }
 

@@ -2,10 +2,13 @@ package org.dhbw.swe.board;
 
 import java.util.List;
 
-public interface BoardInterface {
+public interface BoardInterface
+{
+    List<FieldInterface> getBoard();
 
-    List<FieldInterface> board();
-    List<FieldInterface> makeMove(FieldInterface from, FieldInterface to);
+    void makeMove(final int p0, final int p1);
+
     ControlMechanismInterface getControlMechanism();
 
+    void initBoard(final int p0);
 }

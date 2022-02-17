@@ -1,9 +1,10 @@
 package org.dhbw.swe.board;
 
-abstract public class AbstractControlMechanism {
-
+public abstract class AbstractControlMechanism implements ControlMechanismInterface
+{
     protected Graph graph;
 
-
-
+    public AbstractControlMechanism() {
+        this.graph = Graph.INSTANCE;
+    }
 }

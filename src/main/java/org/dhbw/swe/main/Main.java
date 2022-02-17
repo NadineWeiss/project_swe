@@ -2,14 +2,14 @@ package org.dhbw.swe.main;
 
 import org.dhbw.swe.board.ControlMechanismFour;
 import org.dhbw.swe.board.Graph;
+import org.dhbw.swe.game.GameService;
+import org.dhbw.swe.visualization.GameFrame;
 
 public class Main {
 
     public static void main (String[] args){
 
-        Graph.INSTANCE.four.stream().forEach(x -> System.out.println(x));
-
-        //System.out.println(new ControlMechanismFour().dice());
+        new GameService();
 
     }
 

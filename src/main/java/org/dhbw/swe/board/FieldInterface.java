@@ -4,7 +4,12 @@ import java.util.List;
 
 public interface FieldInterface {
 
-    List<FieldType> type();
-    GamePieceInterface gamePiece();
-    void setGamePiece(GamePiece gamePiece);
+    FieldType getType();
+
+    GamePieceInterface getGamePiece();
+
+    void setType(final FieldType fieldType);
+
+    void setGamePiece(final GamePieceInterface gamePieceInterface);
+
 }

@@ -11,63 +11,45 @@ public class Node {
     private FieldType type;
     private List<Edge> edges;
 
-    public Node(FieldType type, List<Edge> edges) {
+    public Node(final FieldType type, final List<Edge> edges) {
         this.type = type;
         this.edges = edges;
     }
 
-    public void addEdge(Edge edge){
-
-        if(edges == null) {
-            edges = Arrays.asList(edge);
-        }else{
-            List<Edge> list = new ArrayList<>();
-            list.addAll(edges);
-            list.add(edge);
-            edges = list;
+    public void addEdge(final Edge edge) {
+        if (this.edges == null) {
+            this.edges = Arrays.asList(edge);
         }
-
+        else {
+            final List<Edge> list = new ArrayList<Edge>();
+            list.addAll(this.edges);
+            list.add(edge);
+            this.edges = list;
+        }
     }
 
     public FieldType getType() {
-        return type;
+        return this.type;
     }
 
-    public void setType(FieldType type) {
+    public void setType(final FieldType type) {
         this.type = type;
     }
 
     public List<Edge> getEdges() {
-        return edges;
+        return this.edges;
     }
 
-    public void setEdges(List<Edge> edges) {
+    public void setEdges(final List<Edge> edges) {
         this.edges = edges;
     }
 
-    public Edge getDefaultEdge(){
-
-        return edges.stream().filter(x -> x.isDefaultDir()).findFirst().get();
-
+    public Edge getDefaultEdge() {
+        return this.edges.stream().filter(x -> x.isDefaultDir()).findFirst().get();
     }
 
-    public Edge getSpecialEdge(){
-
-        return edges.stream().filter(x -> !x.isDefaultDir()).findFirst().get();
-
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Node node = (Node) o;
-        return type == node.type && Objects.equals(edges, node.edges);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(type, edges);
+    public Edge getSpecialEdge() {
+        return this.edges.stream().filter(x -> !x.isDefaultDir()).findFirst().get();
     }
 
     @Override
