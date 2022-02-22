@@ -1,27 +1,29 @@
 package org.dhbw.swe.visualization;
 
 import org.dhbw.swe.board.*;
+import org.dhbw.swe.game.Observer;
+import org.dhbw.swe.game.Context;
+import org.dhbw.swe.game.ObserverContext;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-public class GameFrame extends JFrame {
+public class GameFrame extends JFrame implements Observable {
 
     private List<FieldButton> btns = new ArrayList<>();
     private DiceButton btnNewDice = new DiceButton();
     private DiceButton btnPreviousDice = new DiceButton();
     private JPanel panel = new JPanel();
     private JPanel panelField = new JPanel();
-    private PropertyChangeSupport changes = new PropertyChangeSupport(this);
-    private Color turnColor;
+
+    List<Observer> observers = new ArrayList<>();
 
     public GameFrame() throws HeadlessException {
 
@@ -29,7 +31,7 @@ public class GameFrame extends JFrame {
 
             DiceButton btn = ((DiceButton)e.getSource());
             if(btn.isClickable())
-                changes.firePropertyChange( "dice", "x", "y");
+                notifyObservers(new ObserverContext(Context.DICE));
 
         });
 
@@ -56,7 +58,6 @@ public class GameFrame extends JFrame {
     public JPanel setPanelField(){
 
         btns.clear();
-        turnColor = null;
 
         panelField.setLayout(new GridLayout(11, 11));
 
@@ -81,7 +82,7 @@ public class GameFrame extends JFrame {
 
         JPanel panelMenu = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton newGameBtn = new JButton("Neues Spiel");
-        newGameBtn.addActionListener(e -> changes.firePropertyChange( "new", "x", "y"));
+        newGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.NEW)));
         newGameBtn.setFocusPainted(false);
         panelMenu.add(newGameBtn);
 
@@ -93,6 +94,8 @@ public class GameFrame extends JFrame {
 
         panelCoordinate.add(panelMenu, BorderLayout.NORTH);
         panelCoordinate.add(panelDice, BorderLayout.CENTER);
+
+
 
         return panelCoordinate;
 
@@ -137,7 +140,7 @@ public class GameFrame extends JFrame {
 
     }
 
-    public void diced(int diceValue){
+    public void diced(int diceValue, Color turnColor){
 
         btnPreviousDice.setDice(diceValue, turnColor);
         btnNewDice.setClickable(false);
@@ -145,8 +148,8 @@ public class GameFrame extends JFrame {
         btns.stream().filter(x -> x.getPieceColor() != null && x.getPieceColor().equals(turnColor))
                 .forEach(x -> x.setClickable(true));
 
-        this.revalidate();
-        this.repaint();
+        /*this.revalidate();
+        this.repaint();*/
 
     }
 
@@ -155,16 +158,19 @@ public class GameFrame extends JFrame {
         FieldButton btn = ((FieldButton)e.getSource());
 
         if(btn.isClickable()){
-            if(btn.getPieceColor() != null && btn.getPieceColor() == turnColor){
+            if(btn.getPieceColor() != null){
 
                 btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
                 btn.setBackgroundImage(true);
-                changes.firePropertyChange( "calculate", "", ((FieldButton)e.getSource()).getIndex());
+
+                int fieldIndex = ((FieldButton) e.getSource()).getIndex();
+                notifyObservers(new ObserverContext(Context.CALCULATE, Optional.of(fieldIndex)));
 
             }else{
 
                 btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
-                changes.firePropertyChange( "move", "", ((FieldButton)e.getSource()).getIndex());
+
+                notifyObservers(new ObserverContext(Context.MOVE));
 
             }
         }
@@ -180,8 +186,6 @@ public class GameFrame extends JFrame {
 
     public void setTurn(Color color, boolean algo){
 
-        turnColor = color;
-
         if(!algo)
             btnNewDice.setClickable(true);
         btnNewDice.setDice(color);
@@ -189,11 +193,7 @@ public class GameFrame extends JFrame {
         btns.stream().forEach(x -> x.setClickable(false));
 
         if(algo)
-            changes.firePropertyChange("dice", "x", "y");
-
-
-        /*panel.revalidate();
-        panel.repaint();*/
+            notifyObservers(new ObserverContext(Context.DICE));
 
     }
 
@@ -207,16 +207,6 @@ public class GameFrame extends JFrame {
 
         });
 
-    }
-
-    public void addPropertyChangeListener( PropertyChangeListener l )
-    {
-        changes.addPropertyChangeListener( l );
-    }
-
-    public void removePropertyChangeListener( PropertyChangeListener l )
-    {
-        changes.removePropertyChangeListener( l );
     }
 
     private void addRemainigFields(JPanel panel){
@@ -359,6 +349,27 @@ public class GameFrame extends JFrame {
             return 1;
         }
         return 0;
+
+    }
+
+    @Override
+    public void register(Observer observer) {
+
+        observers.add(observer);
+
+    }
+
+    @Override
+    public void remove(Observer observer) {
+
+        observers.remove(observer);
+
+    }
+
+    @Override
+    public void notifyObservers(ObserverContext observerContext) {
+
+        observers.forEach(x -> x.update(observerContext));
 
     }
 
