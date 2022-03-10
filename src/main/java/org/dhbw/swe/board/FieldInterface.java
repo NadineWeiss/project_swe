@@ -1,6 +1,6 @@
 package org.dhbw.swe.board;
 
-import java.util.List;
+import org.dhbw.swe.graph.FieldType;
 
 public interface FieldInterface {
 
@@ -11,5 +11,7 @@ public interface FieldInterface {
     void setType(final FieldType fieldType);
 
     void setGamePiece(final GamePieceInterface gamePieceInterface);
+
+    boolean containsGamePiece();
 
 }

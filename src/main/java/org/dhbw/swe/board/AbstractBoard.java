@@ -1,30 +1,97 @@
 package org.dhbw.swe.board;
 
-import java.awt.Color;
+import org.dhbw.swe.graph.FieldType;
 
-public abstract class AbstractBoard implements BoardInterface
-{
+import java.awt.Color;
+import java.util.Map;
+import java.util.Optional;
+
+public abstract class AbstractBoard implements BoardInterface {
+
+    protected ControlMechanismInterface controlMechanismInterface;
+
     public void makeMove(final int from, final int to) {
-        if (this.getBoard().get(to).getGamePiece() != null) {
-            final GamePieceInterface gamePiece = this.getBoard().get(to).getGamePiece();
-            final FieldInterface field = (FieldInterface)this.getBoard().stream().filter(x -> x.getType().equals((Object)this.getInitType(gamePiece.color())) && x.getGamePiece() == null).findFirst().get();
+
+        if (getField().get(to).getGamePiece() != null) {
+
+            final GamePieceInterface gamePiece = getField().get(to).getGamePiece();
+            final FieldInterface field = getField().stream()
+                    .filter(x -> x.getType().equals(getInitType(gamePiece.color())) && x.getGamePiece() == null)
+                    .findFirst()
+                    .get();
+
             field.setGamePiece(gamePiece);
-            this.getBoard().get(to).setGamePiece((GamePieceInterface)null);
+            getField().get(to).setGamePiece(null);
+
         }
-        this.getBoard().get(to).setGamePiece(this.getBoard().get(from).getGamePiece());
-        this.getBoard().get(from).setGamePiece((GamePieceInterface)null);
+
+        getField().get(to).setGamePiece(getField().get(from).getGamePiece());
+        getField().get(from).setGamePiece(null);
+
+    }
+
+    public boolean isAllowedToRedice(Color color){
+
+        return controlMechanismInterface.isAllowedToRedice(color, getField());
+    }
+
+    public Map<GamePieceInterface, Integer> calculateTurns(Color color, int dice){
+
+        return controlMechanismInterface.calculateTurns(color, getField(), dice);
+
+    }
+
+    public Color checkWin(){
+
+        return controlMechanismInterface.checkWin(getField());
+
+    }
+
+    public Optional<Integer> calculateTurn(int fieldIndex, int dice){
+
+        return controlMechanismInterface.calculateTurn(fieldIndex, getField(), dice);
+
+    }
+
+    public boolean isTurnPossible(Color color, int dice){
+
+        return controlMechanismInterface.isTurnPossible(color, getField(), dice);
+
+    }
+
+    public void calculateAlgorithmMove(final Color color, int dice){
+
+        controlMechanismInterface.calculateAlgorithmMove(color, getField(), dice);
+
+    }
+
+    public int getAlgorithmMoveFrom(){
+
+
+        return controlMechanismInterface.getAlgorithmMoveFrom();
+    }
+
+    public int getAlgorithmMoveTo(){
+
+        return controlMechanismInterface.getAlgorithmMoveTo();
+
     }
 
     private FieldType getInitType(final Color color) {
+
         if (color.equals(Color.RED)) {
+
             return FieldType.REDINIT;
-        }
-        if (color.equals(Color.BLUE)) {
+
+        }else if (color.equals(Color.BLUE)) {
+
             return FieldType.BLUEINIT;
-        }
-        if (color.equals(Color.GREEN)) {
+
+        }else if (color.equals(Color.GREEN)) {
+
             return FieldType.GREENINIT;
         }
+
         return FieldType.YELLOWINIT;
     }
 }

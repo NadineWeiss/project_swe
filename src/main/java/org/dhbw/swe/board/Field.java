@@ -1,6 +1,7 @@
 package org.dhbw.swe.board;
 
-import java.util.List;
+
+import org.dhbw.swe.graph.FieldType;
 
 public class Field implements FieldInterface{
 
@@ -30,6 +31,14 @@ public class Field implements FieldInterface{
 
     public void setGamePiece(final GamePieceInterface gamePiece) {
         this.gamePiece = gamePiece;
+    }
+
+    @Override
+    public boolean containsGamePiece() {
+        if(gamePiece != null)
+            return true;
+
+        return false;
     }
 
 }

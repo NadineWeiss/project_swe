@@ -1,16 +1,15 @@
 package org.dhbw.swe.board;
 
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Arrays;
-import java.awt.Color;
-import java.util.List;
+import org.dhbw.swe.graph.FieldType;
+import org.dhbw.swe.graph.Graph;
+import org.dhbw.swe.graph.Node;
 
-public class ControlMechanismFour extends AbstractControlMechanism
-{
+import java.util.*;
+import java.util.stream.Collectors;
+import java.awt.Color;
+
+public class ControlMechanismFour extends AbstractControlMechanism {
+
     public Color checkWin(final List<FieldInterface> field) {
         final List<Color> colors = Arrays.asList(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
         for (final Color color : colors) {
@@ -21,10 +20,35 @@ public class ControlMechanismFour extends AbstractControlMechanism
         return null;
     }
 
-    public Map<GamePieceInterface, Integer> calculateTurns(final Color color, final List<FieldInterface> field, final int jump) {
+    public Optional<Integer> calculateTurn(int fieldIndex, final List<FieldInterface> field, int dice) {
+
+        GamePieceInterface currentGamePiece = field.get(fieldIndex).getGamePiece();
+        Map<GamePieceInterface, Integer> possibleMoves = calculateTurns(currentGamePiece.color(), field, dice);
+
+        for(Map.Entry<GamePieceInterface, Integer> move : possibleMoves.entrySet()){
+
+            if(move.getKey().equals(currentGamePiece))
+                return Optional.of(move.getValue());
+
+        }
+
+        return Optional.empty();
+
+    }
+
+    public boolean isTurnPossible(Color color, final List<FieldInterface> field, int dice){
+
+        if(calculateTurns(color, field, dice).isEmpty())
+            return false;
+
+        return true;
+
+    }
+
+    public Map<GamePieceInterface, Integer> calculateTurns(final Color color, final List<FieldInterface> field, final int dice) {
 
         final Map<GamePieceInterface, Integer> result = new HashMap<>();
-        if (jump == 6 && field.stream()
+        if (dice == 6 && field.stream()
                 .filter(x -> x.getType().equals(getInitType(color)))
                 .anyMatch(x -> x.getGamePiece() != null) && !field.stream()
                     .filter(x -> x.getType().equals(getStartType(color)))
@@ -51,11 +75,11 @@ public class ControlMechanismFour extends AbstractControlMechanism
                 .anyMatch(x -> x.getGamePiece() != null)
                 && startField.getGamePiece() != null
                 && startField.getGamePiece().color().equals(color)
-                && ((field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), jump, color)).getGamePiece() != null
-                && !field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), jump, color)).getGamePiece().color().equals(color))
-                || field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), jump, color)).getGamePiece() == null)) {
+                && ((field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), dice, color)).getGamePiece() != null
+                && !field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), dice, color)).getGamePiece().color().equals(color))
+                || field.get(this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), dice, color)).getGamePiece() == null)) {
 
-            return Map.of(startField.getGamePiece(), this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), jump, color));
+            return Map.of(startField.getGamePiece(), this.getTargetPosition(Graph.INSTANCE.four.get(field.indexOf(startField)), dice, color));
 
         }
 
@@ -64,7 +88,7 @@ public class ControlMechanismFour extends AbstractControlMechanism
 
         for (final Node node : currentPositions) {
 
-            final int target = this.getTargetPosition(node, jump, color);
+            final int target = this.getTargetPosition(node, dice, color);
 
             if (!currentPositions.stream().map(x -> Graph.INSTANCE.four.indexOf(x)).anyMatch(x -> x == target) && target != -1) {
 
