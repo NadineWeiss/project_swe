@@ -8,6 +8,7 @@ public interface BoardInterface{
 
     List<FieldInterface> getField();
     List<Optional<Color>> getColorField();
+    List<Integer> getGamePiecePositions(Color color);
 
     Color checkWin();
     Optional<Integer> calculateTurn(int fieldIndex, int dice);

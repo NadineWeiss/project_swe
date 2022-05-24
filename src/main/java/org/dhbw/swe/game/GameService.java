@@ -16,7 +16,6 @@ public class GameService implements Observer{
     private int moveFrom;
     private int moveTo;
     private int redice;
-    private List<Color> algoColors;
 
     public GameService() {
 
@@ -42,6 +41,12 @@ public class GameService implements Observer{
         else if (observerContext.getContext().equals(Context.NEW)) {
             newGame();
         }
+        else if (observerContext.getContext().equals(Context.SAVE)) {
+            GameIO.saveGame(gameParameter);
+        }
+        else if (observerContext.getContext().equals(Context.LOAD)) {
+            loadGame();
+        }
 
     }
 
@@ -50,26 +55,36 @@ public class GameService implements Observer{
         final int playerNumber = gameVisualization.getPlayerNumber();
         final int algoNumber = gameVisualization.getAlgoNumber(playerNumber);
 
-        if (algoNumber == 3) {
-            algoColors = Arrays.asList(Color.GREEN, Color.YELLOW, Color.BLUE);
-        }
-        else if (algoNumber == 2) {
-            algoColors = Arrays.asList(Color.GREEN, Color.YELLOW);
-        }
-        else if (algoNumber == 1) {
-            algoColors = Arrays.asList(Color.GREEN);
-        }
-        else {
-            algoColors = new ArrayList<>();
-        }
-
         final BoardInterface board = BoardInterface.initBoardInterface(4);
         board.initBoard(playerNumber);
-
         gameParameter = new GameParameter(board, Color.RED, playerNumber);
+
+        if (algoNumber == 3) {
+            gameParameter.setAlgoColors(Arrays.asList(Color.GREEN, Color.YELLOW, Color.BLUE));
+        }
+        else if (algoNumber == 2) {
+            gameParameter.setAlgoColors(Arrays.asList(Color.GREEN, Color.YELLOW));
+        }
+        else if (algoNumber == 1) {
+            gameParameter.setAlgoColors(Arrays.asList(Color.GREEN));
+        }
+        else {
+            gameParameter.setAlgoColors(new ArrayList<>());
+        }
 
         gameVisualization.newGame(gameParameter.getBoard().getColorField());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
+
+    }
+
+    private void loadGame(){
+
+        String fileName = gameVisualization.getSelectedFile(GameIO.getFileNames());
+        gameParameter = GameIO.loadGame(fileName);
+
+        gameVisualization.newGame(gameParameter.getBoard().getColorField());
+        gameVisualization.setTurn(gameParameter.getTurn(), false);
+        //Auch die würfel und so aktualisieren
 
     }
 
@@ -113,7 +128,7 @@ public class GameService implements Observer{
 
             nextTurn();
 
-        } else if (algoColors.contains(gameParameter.getTurn())) {
+        } else if (gameParameter.getAlgoColors().contains(gameParameter.getTurn())) {
 
             gameParameter.getBoard().calculateAlgorithmMove(gameParameter.getTurn(), currentDice);
             int moveFrom = gameParameter.getBoard().getAlgorithmMoveFrom();
@@ -161,7 +176,7 @@ public class GameService implements Observer{
 
         }
 
-        if (algoColors.contains(gameParameter.getTurn())) {
+        if (gameParameter.getAlgoColors().contains(gameParameter.getTurn())) {
 
             gameVisualization.setTurn(gameParameter.getTurn(), true);
 

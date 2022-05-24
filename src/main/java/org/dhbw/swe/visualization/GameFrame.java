@@ -85,11 +85,23 @@ public class GameFrame extends JFrame implements Observable {
         JPanel panelCoordinate = new JPanel();
         panelCoordinate.setLayout(new BorderLayout());
 
-        JPanel panelMenu = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelMenu = new JPanel();
+        panelMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
+
         JButton newGameBtn = new JButton("Neues Spiel");
         newGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.NEW)));
         newGameBtn.setFocusPainted(false);
         panelMenu.add(newGameBtn);
+
+        JButton saveGameBtn = new JButton("Spiel speichern");
+        saveGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.SAVE)));
+        saveGameBtn.setFocusPainted(false);
+        panelMenu.add(saveGameBtn);
+
+        JButton loadGameBtn = new JButton("Spiel laden");
+        loadGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.LOAD)));
+        loadGameBtn.setFocusPainted(false);
+        panelMenu.add(loadGameBtn);
 
         JPanel panelDice = new JPanel();
         panelDice.add(btnNewDice);
@@ -135,6 +147,15 @@ public class GameFrame extends JFrame implements Observable {
             return 0;
 
         return index;
+
+    }
+
+    public String getSelectedFile(List<String> fileChoices){
+
+        String selectedFileName = (String) JOptionPane.showInputDialog(null, "Wähle das Spiel, das geladen werden soll:",
+                "Auswahl eines Spiels", JOptionPane.QUESTION_MESSAGE, null, fileChoices.toArray(), fileChoices.toArray()[1]);
+
+        return selectedFileName;
 
     }
 

@@ -1,6 +1,8 @@
 package org.dhbw.swe.game;
 
 import java.awt.Color;
+import java.util.List;
+
 import org.dhbw.swe.board.BoardInterface;
 
 public class GameParameter {
@@ -8,6 +10,7 @@ public class GameParameter {
     private BoardInterface board;
     private Color turn;
     private int playerNumber;
+    private List<Color> algoColors;
 
     public GameParameter(final BoardInterface board, final Color turn, final int playerNumber) {
         this.board = board;
@@ -39,4 +42,11 @@ public class GameParameter {
         this.playerNumber = playerNumber;
     }
 
+    public List<Color> getAlgoColors() {
+        return algoColors;
+    }
+
+    public void setAlgoColors(List<Color> algoColors) {
+        this.algoColors = algoColors;
+    }
 }

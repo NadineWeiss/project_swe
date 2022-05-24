@@ -4,7 +4,7 @@ import java.util.Optional;
 
 public enum Context {
 
-    CALCULATE, MOVE, DICE, NEW;
+    CALCULATE, MOVE, DICE, NEW, SAVE, LOAD;
 
 
 }

@@ -20,6 +20,7 @@ public class BoardFour extends AbstractBoard{
 
     }
 
+    @Override
     public void initBoard(final int playerNumber) {
 
         final List<FieldInterface> result = new ArrayList<>();
@@ -39,31 +40,14 @@ public class BoardFour extends AbstractBoard{
         this.field = result;
     }
 
-    private Color getColor(final FieldType type) {
-        if (type.toString().contains("RED")) {
-            return Color.RED;
-        }
-        if (type.toString().contains("BLUE")) {
-            return Color.BLUE;
-        }
-        if (type.toString().contains("GREEN")) {
-            return Color.GREEN;
-        }
-        return Color.YELLOW;
-    }
-
-    public ControlMechanismInterface getControlMechanism() {
-
-        return controlMechanismInterface;
-
-    }
-
+    @Override
     public List<FieldInterface> getField() {
 
         return field;
 
     }
 
+    @Override
     public List<Optional<Color>> getColorField() {
 
         List<Optional<Color>> result = new ArrayList<>();
@@ -83,6 +67,44 @@ public class BoardFour extends AbstractBoard{
         }
 
         return result;
+
+    }
+
+    @Override
+    public List<Integer> getGamePiecePositions(Color color) {
+
+        List<Integer> positions = new ArrayList<>();
+
+        for(FieldInterface field : field){
+
+            if(field.getGamePiece() != null && field.getGamePiece().color().equals(color)){
+
+                positions.add(this.field.indexOf(field));
+
+            }
+
+        }
+
+        return positions;
+
+    }
+
+    private Color getColor(final FieldType type) {
+        if (type.toString().contains("RED")) {
+            return Color.RED;
+        }
+        if (type.toString().contains("BLUE")) {
+            return Color.BLUE;
+        }
+        if (type.toString().contains("GREEN")) {
+            return Color.GREEN;
+        }
+        return Color.YELLOW;
+    }
+
+    public ControlMechanismInterface getControlMechanism() {
+
+        return controlMechanismInterface;
 
     }
 
