@@ -1,16 +1,14 @@
 package org.dhbw.swe.game;
 
-import jdk.jshell.spi.ExecutionControl;
+import org.dhbw.swe.board.BoardInterface;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyStore;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,27 +18,25 @@ public class GameIO {
     public static void saveGame(GameParameter gameParameter){
 
         String json = newJsonObject();
-        json = addStringParameter(json, "PlayerNumber", String.valueOf(gameParameter.getPlayerNumber()));
-        json = addStringParameter(json, "TurnColor", String.valueOf(gameParameter.getTurn()));
+        json = addStringParameterToJSON(json, "PlayerNumber", String.valueOf(gameParameter.getPlayerNumber()));
+        json = addStringParameterToJSON(json, "TurnColor", Integer.toString(gameParameter.getTurn().getRGB()));
 
         List<String> algoColors = gameParameter.getAlgoColors().stream()
-                .map(x -> x.toString())
+                .map(x -> Integer.toString(x.getRGB()))
                 .collect(Collectors.toList());
-        json = addStringListParameter(json, "AlgoColors", algoColors);
+        json = addStringListParameterToJSON(json, "AlgoColors", algoColors);
 
         List<Integer> redPositions = gameParameter.getBoard().getGamePiecePositions(Color.RED);
-        json = addIntegerListParameter(json, "RedGamePiecePositions", redPositions);
+        json = addIntegerListParameterToJSON(json, "RedGamePiecePositions", redPositions);
 
         List<Integer> yellowPositions = gameParameter.getBoard().getGamePiecePositions(Color.YELLOW);
-        json = addIntegerListParameter(json, "YellowGamePiecePositions", yellowPositions);
+        json = addIntegerListParameterToJSON(json, "YellowGamePiecePositions", yellowPositions);
 
         List<Integer> greenPositions = gameParameter.getBoard().getGamePiecePositions(Color.GREEN);
-        json = addIntegerListParameter(json, "GreenGamePiecePositions", greenPositions);
+        json = addIntegerListParameterToJSON(json, "GreenGamePiecePositions", greenPositions);
 
         List<Integer> bluePositions = gameParameter.getBoard().getGamePiecePositions(Color.BLUE);
-        json = addIntegerListParameter(json, "BlueGamePiecePositions", bluePositions);
-
-        System.out.println(json);
+        json = addIntegerListParameterToJSON(json, "BlueGamePiecePositions", bluePositions);
 
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
@@ -65,7 +61,7 @@ public class GameIO {
 
             while(line != null){
 
-                //Todo: parameters.put()
+                parameters.putAll(getParameter(line));
                 line = in.readLine();
             }
 
@@ -73,8 +69,46 @@ public class GameIO {
             e.printStackTrace();
         }
 
-        //todo
-        return null;
+        return transformParameters(parameters);
+
+    }
+
+    private static GameParameter transformParameters(Map<String, Object> parameters){
+
+        int playerNumber = Integer.valueOf(parameters.get("PlayerNumber").toString());
+        Color turn = new Color(Integer.parseInt(parameters.get("TurnColor").toString()));
+
+        List<Color> algoColors = new ArrayList<>();
+        for(String algoColor : (List<String>) parameters.get("AlgoColors")){
+            algoColors.add(new Color(Integer.parseInt(algoColor)));
+        }
+
+        final BoardInterface board = BoardInterface.initBoardInterface(4);
+        board.initBoard(playerNumber);
+
+        List<Integer> redPositions = ((List<String>) parameters.get("RedGamePiecePositions")).stream()
+                .map(x -> Integer.parseInt(x))
+                .collect(Collectors.toList());
+        List<Integer> yellowPositions = ((List<String>) parameters.get("YellowGamePiecePositions")).stream()
+                .map(x -> Integer.parseInt(x))
+                .collect(Collectors.toList());
+        List<Integer> greenPositions = ((List<String>) parameters.get("GreenGamePiecePositions")).stream()
+                .map(x -> Integer.parseInt(x))
+                .collect(Collectors.toList());
+        List<Integer> bluePositions = ((List<String>) parameters.get("BlueGamePiecePositions")).stream()
+                .map(x -> Integer.parseInt(x))
+                .collect(Collectors.toList());
+
+        for(int i = 3; i >= 0; i--){
+
+            board.makeMove(0 + i, redPositions.get(i));
+            board.makeMove(4 + i, yellowPositions.get(i));
+            board.makeMove(8 + i, greenPositions.get(i));
+            board.makeMove(12 + i, bluePositions.get(i));
+
+        }
+
+        return new GameParameter(board, turn, playerNumber, algoColors);
 
     }
 
@@ -82,13 +116,31 @@ public class GameIO {
 
         Map<String, Object> parameter = new HashMap<>();
 
+        //Match Strings for value
         Pattern pattern = Pattern.compile("(\")(.*?)(\" : \")(.*?)(\")");
         Matcher matcher = pattern.matcher(line);
         while (matcher.find()) {
-            parameter.put(matcher.group(2), matcher.group(3));
+            parameter.put(matcher.group(2), matcher.group(4));
         }
 
-        //Todo: Match list
+        //Match List for value
+        pattern = Pattern.compile("(\")(.*?)(\" : \\[)((.+?)(,(.+?))?(,(.+?))?(,(.+?))?)?\\]");
+        matcher = pattern.matcher(line);
+        while (matcher.find()) {
+
+            List<String> values = new ArrayList<>();
+
+            for(int i = 5; i <= matcher.groupCount(); i+=2){
+                values.add(matcher.group(i));
+            }
+
+            values = values.stream()
+                    .filter(x -> x != null)
+                    .collect(Collectors.toList());
+
+            parameter.put(matcher.group(2), values);
+
+        }
 
         return parameter;
 
@@ -115,15 +167,15 @@ public class GameIO {
 
     }
 
-    private static String addStringParameter(String json, String name, String value){
+    private static String addStringParameterToJSON(String json, String name, String value){
 
         String newParameter = "\t\"" + name + "\" : \"" + value + "\"";
 
-        return addParameter(json, newParameter);
+        return addParameterToJSON(json, newParameter);
 
     }
 
-    private static String addIntegerListParameter(String json, String name, List<Integer> values){
+    private static String addIntegerListParameterToJSON(String json, String name, List<Integer> values){
 
         String jsonValue = "[";
 
@@ -139,11 +191,11 @@ public class GameIO {
 
         String newParameter = "\t\"" + name + "\" : " + jsonValue;
 
-        return addParameter(json, newParameter);
+        return addParameterToJSON(json, newParameter);
 
     }
 
-    private static String addStringListParameter(String json, String name, List<String> values){
+    private static String addStringListParameterToJSON(String json, String name, List<String> values){
 
         String jsonValue = "[";
 
@@ -159,11 +211,11 @@ public class GameIO {
 
         String newParameter = "\t\"" + name + "\" : " + jsonValue;
 
-        return addParameter(json, newParameter);
+        return addParameterToJSON(json, newParameter);
 
     }
 
-    private static String addParameter(String json, String newParameter){
+    private static String addParameterToJSON(String json, String newParameter){
 
         String firstPart = json.substring(0, json.length() - 2);
         if(!firstPart.equals("{")){

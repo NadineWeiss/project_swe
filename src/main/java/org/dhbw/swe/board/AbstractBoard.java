@@ -12,6 +12,10 @@ public abstract class AbstractBoard implements BoardInterface {
 
     public void makeMove(final int from, final int to) {
 
+        if(from == to){
+            return;
+        }
+
         if (getField().get(to).getGamePiece() != null) {
 
             final GamePieceInterface gamePiece = getField().get(to).getGamePiece();

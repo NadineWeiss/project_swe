@@ -1,8 +1,7 @@
 package org.dhbw.swe.visualization;
 
-import org.dhbw.swe.board.*;
-import org.dhbw.swe.game.Observer;
 import org.dhbw.swe.game.Context;
+import org.dhbw.swe.game.Observer;
 import org.dhbw.swe.game.ObserverContext;
 import org.dhbw.swe.graph.Direction;
 import org.dhbw.swe.graph.FieldType;
@@ -153,7 +152,7 @@ public class GameFrame extends JFrame implements Observable {
     public String getSelectedFile(List<String> fileChoices){
 
         String selectedFileName = (String) JOptionPane.showInputDialog(null, "Wähle das Spiel, das geladen werden soll:",
-                "Auswahl eines Spiels", JOptionPane.QUESTION_MESSAGE, null, fileChoices.toArray(), fileChoices.toArray()[1]);
+                "Auswahl eines Spiels", JOptionPane.QUESTION_MESSAGE, null, fileChoices.toArray(), fileChoices.toArray()[0]);
 
         return selectedFileName;
 
