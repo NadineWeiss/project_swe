@@ -1,8 +1,8 @@
 package org.dhbw.swe.board;
 
-import org.dhbw.swe.graph.FieldType;
+import org.dhbw.swe.graph.GraphUtilities;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public abstract class AbstractBoard implements BoardInterface {
 
             final GamePieceInterface gamePiece = getField().get(to).getGamePiece();
             final FieldInterface field = getField().stream()
-                    .filter(x -> x.getType().equals(getInitType(gamePiece.color())) && x.getGamePiece() == null)
+                    .filter(x -> x.getType().equals(GraphUtilities.getInitType(gamePiece.color())) && x.getGamePiece() == null)
                     .findFirst()
                     .get();
 
@@ -81,21 +81,4 @@ public abstract class AbstractBoard implements BoardInterface {
 
     }
 
-    private FieldType getInitType(final Color color) {
-
-        if (color.equals(Color.RED)) {
-
-            return FieldType.REDINIT;
-
-        }else if (color.equals(Color.BLUE)) {
-
-            return FieldType.BLUEINIT;
-
-        }else if (color.equals(Color.GREEN)) {
-
-            return FieldType.GREENINIT;
-        }
-
-        return FieldType.YELLOWINIT;
-    }
 }

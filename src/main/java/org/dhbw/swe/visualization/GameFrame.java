@@ -111,8 +111,6 @@ public class GameFrame extends JFrame implements Observable {
         panelCoordinate.add(panelMenu, BorderLayout.NORTH);
         panelCoordinate.add(panelDice, BorderLayout.CENTER);
 
-
-
         return panelCoordinate;
 
     }

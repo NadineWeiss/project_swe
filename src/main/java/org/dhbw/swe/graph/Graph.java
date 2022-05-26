@@ -52,29 +52,29 @@ public enum Graph
         for (final Edge edge : edges) {
             result.add(new Node(FieldType.NEUTRAL, Arrays.asList(edge)));
         }
-        result.get(0).setType(this.getEndType(color));
-        result.get(1).setType(this.getStartType(color));
+        result.get(0).setType(GraphUtilities.getEndType(color));
+        result.get(1).setType(GraphUtilities.getStartType(color));
         result.get(0).addEdge(new Edge(this.rotateDir(Direction.DOWN, rotation), false));
         return result;
     }
 
     private List<Node> getTarget(final Color color, final int rotation) {
-        final List<Node> result = new ArrayList<Node>();
-        result.add(new Node(this.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(this.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(this.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(this.getTargetType(color), new ArrayList<Edge>()));
+        final List<Node> result = new ArrayList<>();
+        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(GraphUtilities.getTargetType(color), new ArrayList<Edge>()));
         return result;
     }
 
     private List<Node> getInit() {
 
-        final List<Node> result = new ArrayList<Node>();
+        final List<Node> result = new ArrayList<>();
         final List<Color> colors = Arrays.asList(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
 
         colors.stream().forEach(color -> {
             for (int i = 0; i < 4; ++i) {
-                result.add(new Node(this.getInitType(color), new ArrayList<>()));
+                result.add(new Node(GraphUtilities.getInitType(color), new ArrayList<>()));
             }
         });
 
@@ -87,14 +87,14 @@ public enum Graph
         for (final Node node : result) {
             final int index = result.indexOf(node);
             if (!indicesToIgnore.contains(index) && index >= 16) {
-                node.getDefaultEdge().setTarget((Node)result.get(index + 1));
+                node.getDefaultEdge().setTarget(result.get(index + 1));
             }
         }
-        result.get(55).getDefaultEdge().setTarget((Node)result.get(16));
-        result.get(16).getSpecialEdge().setTarget((Node)result.get(56));
-        result.get(26).getSpecialEdge().setTarget((Node)result.get(60));
-        result.get(36).getSpecialEdge().setTarget((Node)result.get(64));
-        result.get(46).getSpecialEdge().setTarget((Node)result.get(68));
+        result.get(55).getDefaultEdge().setTarget(result.get(16));
+        result.get(16).getSpecialEdge().setTarget(result.get(56));
+        result.get(26).getSpecialEdge().setTarget(result.get(60));
+        result.get(36).getSpecialEdge().setTarget(result.get(64));
+        result.get(46).getSpecialEdge().setTarget(result.get(68));
     }
 
     private Direction rotateDir(final Direction direction, final int rotation) {
@@ -105,55 +105,4 @@ public enum Graph
         return this.dirs.get(degree);
     }
 
-    private FieldType getInitType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDINIT;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUEINIT;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENINIT;
-        }
-        return FieldType.YELLOWINIT;
-    }
-
-    private FieldType getStartType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDSTART;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUESTART;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENSTART;
-        }
-        return FieldType.YELLOWSTART;
-    }
-
-    private FieldType getEndType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDEND;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUEEND;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENEND;
-        }
-        return FieldType.YELLOWEND;
-    }
-
-    private FieldType getTargetType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDTARGET;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUETARGET;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENTARGET;
-        }
-        return FieldType.YELLOWTARGET;
-    }
 }

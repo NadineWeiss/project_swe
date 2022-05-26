@@ -1,12 +1,11 @@
 package org.dhbw.swe.game;
 
-import java.util.*;
-
-import org.dhbw.swe.board.*;
-
-import java.awt.Color;
-
+import org.dhbw.swe.board.BoardInterface;
 import org.dhbw.swe.visualization.GameFrame;
+
+import java.awt.*;
+import java.util.List;
+import java.util.*;
 
 public class GameService implements Observer{
 
@@ -80,11 +79,14 @@ public class GameService implements Observer{
     private void loadGame(){
 
         String fileName = gameVisualization.getSelectedFile(GameIO.getFileNames());
-        gameParameter = GameIO.loadGame(fileName);
+        try{
+            gameParameter = GameIO.loadGame(fileName);
+        }catch(NullPointerException e){
+            return;
+        }
 
         gameVisualization.newGame(gameParameter.getBoard().getColorField());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
-        //Auch die würfel und so aktualisieren
 
     }
 

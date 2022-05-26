@@ -56,4 +56,5 @@ public class GameParameter {
     public void setAlgoColors(List<Color> algoColors) {
         this.algoColors = algoColors;
     }
+
 }

@@ -18,6 +18,6 @@ public enum FieldType {
     YELLOWINIT,
     YELLOWSTART,
     YELLOWEND,
-    YELLOWTARGET
+    YELLOWTARGET;
 
 }

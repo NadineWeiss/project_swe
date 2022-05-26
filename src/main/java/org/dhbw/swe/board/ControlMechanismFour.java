@@ -1,19 +1,20 @@
 package org.dhbw.swe.board;
 
-import org.dhbw.swe.graph.FieldType;
 import org.dhbw.swe.graph.Graph;
+import org.dhbw.swe.graph.GraphUtilities;
 import org.dhbw.swe.graph.Node;
 
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.awt.Color;
 
 public class ControlMechanismFour extends AbstractControlMechanism {
 
     public Color checkWin(final List<FieldInterface> field) {
         final List<Color> colors = Arrays.asList(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
         for (final Color color : colors) {
-            if (field.stream().filter(x -> x.getType().equals(getTargetType(color)) && x.getGamePiece() != null).count() == 4) {
+            if (field.stream().filter(x -> x.getType().equals(GraphUtilities.getTargetType(color)) && x.getGamePiece() != null).count() == 4) {
                 return color;
             }
         }
@@ -48,16 +49,20 @@ public class ControlMechanismFour extends AbstractControlMechanism {
     public Map<GamePieceInterface, Integer> calculateTurns(final Color color, final List<FieldInterface> field, final int dice) {
 
         final Map<GamePieceInterface, Integer> result = new HashMap<>();
+
+        //Falls eine 6 gewürfelt wurde und eine Figur der Farbe im Haus ist, muss aus dem Haus rausgesprungen werden
         if (dice == 6 && field.stream()
-                .filter(x -> x.getType().equals(getInitType(color)))
+                .filter(x -> x.getType().equals(GraphUtilities.getInitType(color)))
                 .anyMatch(x -> x.getGamePiece() != null) && !field.stream()
-                    .filter(x -> x.getType().equals(getStartType(color)))
+                    .filter(x -> x.getType().equals(GraphUtilities.getStartType(color)))
                     .anyMatch(x -> x.getGamePiece() != null && x.getGamePiece().color().equals(color))) {
 
+            //Besetzten Felder im Haus herausfinden
             final List<FieldInterface> initFields = field.stream()
-                    .filter(x -> x.getType().equals(getInitType(color)) && x.getGamePiece() != null)
+                    .filter(x -> x.getType().equals(GraphUtilities.getInitType(color)) && x.getGamePiece() != null)
                     .collect(Collectors.toList());
 
+            //Die möglichen Züge aus dem Haus zurückgeben
             for (final FieldInterface initField : initFields) {
 
                 result.put(initField.getGamePiece(), this.getStartPosition(color));
@@ -66,12 +71,16 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
             return result;
         }
+
         final FieldInterface startField = field.stream()
-                .filter(x -> x.getType().equals(getStartType(color)))
+                .filter(x -> x.getType().equals(GraphUtilities.getStartType(color)))
                 .findFirst().get();
 
+        //Das Feld vor dem Haus muss freigemacht werden, wenn da eine eigene Figur steht
+        //Ausführlich: Falls Figuren im Haus & das Feld vor dem Haus durch eigene Figur besetzt ist &
+        //             das Feld, auf das die Figur vor dem eigenen Haus springen könnte, nicht durch eigene Figur besetzt oder leer ist
         if (field.stream()
-                .filter(x -> x.getType().equals(getInitType(color)))
+                .filter(x -> x.getType().equals(GraphUtilities.getInitType(color)))
                 .anyMatch(x -> x.getGamePiece() != null)
                 && startField.getGamePiece() != null
                 && startField.getGamePiece().color().equals(color)
@@ -83,8 +92,9 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
         }
 
+        //Alle Möglichkeiten auf dem Spielfeld zurückgeben
         final List<Node> currentPositions = this.getCurrentPosition(color, field).stream()
-                .filter(x -> !x.getType().equals((Object)this.getInitType(color))).collect(Collectors.toList());
+                .filter(x -> !x.getType().equals(GraphUtilities.getInitType(color))).collect(Collectors.toList());
 
         for (final Node node : currentPositions) {
 
@@ -104,8 +114,8 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
     public boolean isAllowedToRedice(final Color color, final List<FieldInterface> field) {
 
-        final List<FieldInterface> initFields = field.stream().filter(x -> x.getType().equals(getInitType(color)) && x.getGamePiece() != null).collect(Collectors.toList());
-        final List<FieldInterface> targetFields = field.stream().filter(x -> x.getType().equals(getTargetType(color)) && x.getGamePiece() != null).collect(Collectors.toList());
+        final List<FieldInterface> initFields = field.stream().filter(x -> x.getType().equals(GraphUtilities.getInitType(color)) && x.getGamePiece() != null).collect(Collectors.toList());
+        final List<FieldInterface> targetFields = field.stream().filter(x -> x.getType().equals(GraphUtilities.getTargetType(color)) && x.getGamePiece() != null).collect(Collectors.toList());
 
         boolean cleanedUp = true;
         for (final FieldInterface targetField : targetFields) {
@@ -115,58 +125,6 @@ public class ControlMechanismFour extends AbstractControlMechanism {
         }
         return cleanedUp && initFields.size() + targetFields.size() == 4;
 
-    }
-
-    private FieldType getInitType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDINIT;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUEINIT;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENINIT;
-        }
-        return FieldType.YELLOWINIT;
-    }
-
-    private FieldType getStartType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDSTART;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUESTART;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENSTART;
-        }
-        return FieldType.YELLOWSTART;
-    }
-
-    private FieldType getEndType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDEND;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUEEND;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENEND;
-        }
-        return FieldType.YELLOWEND;
-    }
-
-    private FieldType getTargetType(final Color color) {
-        if (color.equals(Color.RED)) {
-            return FieldType.REDTARGET;
-        }
-        if (color.equals(Color.BLUE)) {
-            return FieldType.BLUETARGET;
-        }
-        if (color.equals(Color.GREEN)) {
-            return FieldType.GREENTARGET;
-        }
-        return FieldType.YELLOWTARGET;
     }
 
     private int getStartPosition(final Color color) {
@@ -196,7 +154,7 @@ public class ControlMechanismFour extends AbstractControlMechanism {
     private int getTargetPosition(final Node node, final int jump, final Color color) {
         Node currentNode = node;
         for (int i = 0; i < jump; ++i) {
-            if (currentNode.getType().equals((Object)this.getEndType(color))) {
+            if (currentNode.getType().equals((Object)GraphUtilities.getEndType(color))) {
                 currentNode = currentNode.getSpecialEdge().getTarget();
             }
             else {
