@@ -52,18 +52,18 @@ public enum Graph
         for (final Edge edge : edges) {
             result.add(new Node(FieldType.NEUTRAL, Arrays.asList(edge)));
         }
-        result.get(0).setType(GraphUtilities.getEndType(color));
-        result.get(1).setType(GraphUtilities.getStartType(color));
+        result.get(0).setType(FieldType.getEndType(color));
+        result.get(1).setType(FieldType.getStartType(color));
         result.get(0).addEdge(new Edge(this.rotateDir(Direction.DOWN, rotation), false));
         return result;
     }
 
     private List<Node> getTarget(final Color color, final int rotation) {
         final List<Node> result = new ArrayList<>();
-        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(GraphUtilities.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
-        result.add(new Node(GraphUtilities.getTargetType(color), new ArrayList<Edge>()));
+        result.add(new Node(FieldType.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(FieldType.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(FieldType.getTargetType(color), Arrays.asList(new Edge(this.rotateDir(Direction.DOWN, rotation), true))));
+        result.add(new Node(FieldType.getTargetType(color), new ArrayList<Edge>()));
         return result;
     }
 
@@ -74,7 +74,7 @@ public enum Graph
 
         colors.stream().forEach(color -> {
             for (int i = 0; i < 4; ++i) {
-                result.add(new Node(GraphUtilities.getInitType(color), new ArrayList<>()));
+                result.add(new Node(FieldType.getInitType(color), new ArrayList<>()));
             }
         });
 

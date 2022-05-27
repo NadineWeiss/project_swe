@@ -19,7 +19,7 @@ public abstract class AbstractControlMechanism implements ControlMechanismInterf
 
     public void calculateAlgorithmMove(final Color color, final List<FieldInterface> field, int dice){
 
-        algorithm.calculateMove(color, calculateTurns(color, field, dice), field);
+        algorithm.calculateMove(color, calculateMoves(color, field, dice), field);
 
     }
 

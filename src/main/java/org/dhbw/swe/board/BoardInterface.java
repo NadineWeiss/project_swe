@@ -6,18 +6,18 @@ import java.util.Optional;
 
 public interface BoardInterface{
 
-    List<FieldInterface> getField();
-    List<Optional<Color>> getColorField();
+    List<FieldInterface> getBoard();
+    List<Optional<Color>> getColorBoard();
     List<Integer> getGamePiecePositions(Color color);
 
     Color checkWin();
-    Optional<Integer> calculateTurn(int fieldIndex, int dice);
+    Optional<Integer> calculateMove(int fieldIndex, int dice);
 
     void initBoard(int playerNumber);
     void makeMove(int from, int to);
 
     boolean isAllowedToRedice(Color color);
-    boolean isTurnPossible(Color color, int dice);
+    boolean isMovePossible(Color color, int dice);
 
     void calculateAlgorithmMove(final Color color, int dice);
     int getAlgorithmMoveFrom();

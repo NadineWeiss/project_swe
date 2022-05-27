@@ -24,7 +24,7 @@ public class GameFrame extends JFrame implements Observable {
     private DiceButton btnNewDice = new DiceButton();
     private DiceButton btnPreviousDice = new DiceButton();
     private JPanel panel = new JPanel();
-    private JPanel panelField = new JPanel();
+    private JPanel panelBoard = new JPanel();
 
     private List<Observer> observers = new ArrayList<>();
     private Color turnColor;
@@ -41,15 +41,15 @@ public class GameFrame extends JFrame implements Observable {
 
     }
 
-    public void newGame(List<Optional<Color>> field){
+    public void newGame(List<Optional<Color>> board){
 
-        panelField.removeAll();
+        panelBoard.removeAll();
         panel.removeAll();
         panel.setLayout(new BorderLayout());
         panel.add(setPanelCoordinate(), BorderLayout.NORTH);
-        panel.add(setPanelField(), BorderLayout.CENTER);
+        panel.add(setPanelBoard(), BorderLayout.CENTER);
 
-        setGamePieces(field);
+        setGamePieces(board);
 
         setTitle("Mensch Ärgere Dich Nicht");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,23 +59,23 @@ public class GameFrame extends JFrame implements Observable {
 
     }
 
-    public JPanel setPanelField(){
+    public JPanel setPanelBoard(){
 
         btns.clear();
 
-        panelField.setLayout(new GridLayout(11, 11));
+        panelBoard.setLayout(new GridLayout(11, 11));
 
         for(int i = 0; i < 121; i++){
             JPanel p = new JPanel();
             p.setBackground(new Color(127, 127, 127));
-            panelField.add(p);
+            panelBoard.add(p);
         }
 
-        addInitFields(panelField, Graph.INSTANCE.four.subList(0, 16));
-        addRemainigFields(panelField);
-        addTargetFields(panelField, Graph.INSTANCE.four.subList(56, 72));
+        addInitFields(panelBoard, Graph.INSTANCE.four.subList(0, 16));
+        addRemainigFields(panelBoard);
+        addTargetFields(panelBoard, Graph.INSTANCE.four.subList(56, 72));
 
-        return panelField;
+        return panelBoard;
 
     }
 
@@ -227,22 +227,22 @@ public class GameFrame extends JFrame implements Observable {
 
     }
 
-    public void setGamePieces(List<Optional<Color>> field) {
+    public void setGamePieces(List<Optional<Color>> board) {
 
         btns.stream().forEach(x -> x.removePiece());
 
-        for(int i = 0; i < field.size(); i++){
+        for(int i = 0; i < board.size(); i++){
 
-            if(!field.get(i).isEmpty()){
+            if(!board.get(i).isEmpty()){
 
-                btns.get(i).setPiece(field.get(i).get());
+                btns.get(i).setPiece(board.get(i).get());
 
             }
 
         }
 
-        panelField.revalidate();
-        panelField.repaint();
+        panelBoard.revalidate();
+        panelBoard.repaint();
 
     }
 

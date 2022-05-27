@@ -7,12 +7,12 @@ import java.util.Optional;
 
 public interface ControlMechanismInterface {
 
-    boolean isAllowedToRedice(Color color, List<FieldInterface> field);
-    Color checkWin(List<FieldInterface> field);
-    Optional<Integer> calculateTurn(int fieldIndex, final List<FieldInterface> field, int dice);
-    boolean isTurnPossible(Color color, final List<FieldInterface> field, int dice);
-    Map<GamePieceInterface, Integer> calculateTurns(Color color, List<FieldInterface> field, int jump);
-    void calculateAlgorithmMove(final Color color, final List<FieldInterface> field, int dice);
+    boolean isAllowedToRedice(Color color, List<FieldInterface> board);
+    Color checkWin(List<FieldInterface> board);
+    Optional<Integer> calculateMove(int fieldIndex, final List<FieldInterface> board, int dice);
+    boolean isMovePossible(Color color, final List<FieldInterface> board, int dice);
+    Map<GamePieceInterface, Integer> calculateMoves(Color color, List<FieldInterface> board, int jump);
+    void calculateAlgorithmMove(final Color color, final List<FieldInterface> board, int dice);
     int getAlgorithmMoveFrom();
     int getAlgorithmMoveTo();
 

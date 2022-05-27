@@ -29,7 +29,7 @@ public class GameService implements Observer{
     public void update(ObserverContext observerContext) {
 
         if (observerContext.getContext().equals(Context.CALCULATE)) {
-            calculateTurns(observerContext.getFieldIndex());
+            calculateMoves(observerContext.getFieldIndex());
         }
         else if (observerContext.getContext().equals(Context.MOVE)) {
             makeMove();
@@ -71,7 +71,7 @@ public class GameService implements Observer{
             gameParameter.setAlgoColors(new ArrayList<>());
         }
 
-        gameVisualization.newGame(gameParameter.getBoard().getColorField());
+        gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
 
     }
@@ -85,7 +85,7 @@ public class GameService implements Observer{
             return;
         }
 
-        gameVisualization.newGame(gameParameter.getBoard().getColorField());
+        gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
 
     }
@@ -93,7 +93,7 @@ public class GameService implements Observer{
     private void makeMove() {
 
         gameParameter.getBoard().makeMove(moveFrom, moveTo);
-        gameVisualization.setGamePieces(gameParameter.getBoard().getColorField());
+        gameVisualization.setGamePieces(gameParameter.getBoard().getColorBoard());
 
         final Color winner = gameParameter.getBoard().checkWin();
 
@@ -107,9 +107,9 @@ public class GameService implements Observer{
 
     }
 
-    private void calculateTurns(final int fieldIndex) {
+    private void calculateMoves(final int fieldIndex) {
 
-        Optional<Integer> moveTo = gameParameter.getBoard().calculateTurn(fieldIndex, currentDice);
+        Optional<Integer> moveTo = gameParameter.getBoard().calculateMove(fieldIndex, currentDice);
 
         if(moveTo.isPresent()){
 
@@ -126,7 +126,7 @@ public class GameService implements Observer{
         currentDice = new Random().nextInt(6) + 1;
         gameVisualization.diced(currentDice, gameParameter.getTurn());
 
-        if (!gameParameter.getBoard().isTurnPossible(gameParameter.getTurn(), currentDice)) {
+        if (!gameParameter.getBoard().isMovePossible(gameParameter.getTurn(), currentDice)) {
 
             nextTurn();
 
@@ -137,7 +137,7 @@ public class GameService implements Observer{
             int moveTo = gameParameter.getBoard().getAlgorithmMoveTo();
 
             gameParameter.getBoard().makeMove(moveFrom, moveTo);
-            gameVisualization.setGamePieces(gameParameter.getBoard().getColorField());
+            gameVisualization.setGamePieces(gameParameter.getBoard().getColorBoard());
 
             final Color winner = gameParameter.getBoard().checkWin();
             if (winner != null) {

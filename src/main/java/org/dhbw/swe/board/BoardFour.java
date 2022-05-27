@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class BoardFour extends AbstractBoard{
 
-    private List<FieldInterface> field;
+    private List<FieldInterface> board;
     //private ControlMechanismInterface controlMechanismInterface;
 
     public BoardFour() {
@@ -37,22 +37,22 @@ public class BoardFour extends AbstractBoard{
             }
         });
 
-        this.field = result;
+        board = result;
     }
 
     @Override
-    public List<FieldInterface> getField() {
+    public List<FieldInterface> getBoard() {
 
-        return field;
+        return board;
 
     }
 
     @Override
-    public List<Optional<Color>> getColorField() {
+    public List<Optional<Color>> getColorBoard() {
 
         List<Optional<Color>> result = new ArrayList<>();
 
-        for(FieldInterface fieldInterface : field){
+        for(FieldInterface fieldInterface : board){
 
             if(fieldInterface.containsGamePiece()){
 
@@ -75,11 +75,11 @@ public class BoardFour extends AbstractBoard{
 
         List<Integer> positions = new ArrayList<>();
 
-        for(FieldInterface field : field){
+        for(FieldInterface field : board){
 
             if(field.getGamePiece() != null && field.getGamePiece().color().equals(color)){
 
-                positions.add(this.field.indexOf(field));
+                positions.add(this.board.indexOf(field));
 
             }
 

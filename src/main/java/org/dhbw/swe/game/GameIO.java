@@ -17,34 +17,12 @@ public class GameIO {
 
     public static void saveGame(GameParameter gameParameter){
 
-        String json = newJsonObject();
-        json = addStringParameterToJSON(json, "PlayerNumber", String.valueOf(gameParameter.getPlayerNumber()));
-        json = addStringParameterToJSON(json, "TurnColor", Integer.toString(gameParameter.getTurn().getRGB()));
+        String filePath = "gameStatus_" + getDateTime() + ".json";
 
-        List<String> algoColors = gameParameter.getAlgoColors().stream()
-                .map(x -> Integer.toString(x.getRGB()))
-                .collect(Collectors.toList());
-        json = addStringListParameterToJSON(json, "AlgoColors", algoColors);
-
-        List<Integer> redPositions = gameParameter.getBoard().getGamePiecePositions(Color.RED);
-        json = addIntegerListParameterToJSON(json, "RedGamePiecePositions", redPositions);
-
-        List<Integer> yellowPositions = gameParameter.getBoard().getGamePiecePositions(Color.YELLOW);
-        json = addIntegerListParameterToJSON(json, "YellowGamePiecePositions", yellowPositions);
-
-        List<Integer> greenPositions = gameParameter.getBoard().getGamePiecePositions(Color.GREEN);
-        json = addIntegerListParameterToJSON(json, "GreenGamePiecePositions", greenPositions);
-
-        List<Integer> bluePositions = gameParameter.getBoard().getGamePiecePositions(Color.BLUE);
-        json = addIntegerListParameterToJSON(json, "BlueGamePiecePositions", bluePositions);
-
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
-        String dateTime = formatter.format(date);
-
-        String filePath = "gameStatus_" + dateTime + ".json";
         try (PrintWriter out = new PrintWriter(new FileWriter(filePath))) {
-            out.write(json);
+
+            out.write(createJSON(gameParameter));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,6 +48,42 @@ public class GameIO {
         }
 
         return transformParameters(parameters);
+
+    }
+
+    private static String createJSON(GameParameter gameParameter){
+
+        String json = newJsonObject();
+        json = addStringParameterToJSON(json, "PlayerNumber", String.valueOf(gameParameter.getPlayerNumber()));
+        json = addStringParameterToJSON(json, "TurnColor", Integer.toString(gameParameter.getTurn().getRGB()));
+
+        List<String> algoColors = gameParameter.getAlgoColors().stream()
+                .map(x -> Integer.toString(x.getRGB()))
+                .collect(Collectors.toList());
+        json = addStringListParameterToJSON(json, "AlgoColors", algoColors);
+
+        List<Integer> redPositions = gameParameter.getBoard().getGamePiecePositions(Color.RED);
+        json = addIntegerListParameterToJSON(json, "RedGamePiecePositions", redPositions);
+
+        List<Integer> yellowPositions = gameParameter.getBoard().getGamePiecePositions(Color.YELLOW);
+        json = addIntegerListParameterToJSON(json, "YellowGamePiecePositions", yellowPositions);
+
+        List<Integer> greenPositions = gameParameter.getBoard().getGamePiecePositions(Color.GREEN);
+        json = addIntegerListParameterToJSON(json, "GreenGamePiecePositions", greenPositions);
+
+        List<Integer> bluePositions = gameParameter.getBoard().getGamePiecePositions(Color.BLUE);
+        json = addIntegerListParameterToJSON(json, "BlueGamePiecePositions", bluePositions);
+
+        return json;
+
+    }
+
+    private static String getDateTime(){
+
+        Date date = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss");
+
+        return formatter.format(date);
 
     }
 
