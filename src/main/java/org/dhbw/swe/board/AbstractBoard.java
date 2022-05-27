@@ -20,7 +20,7 @@ public abstract class AbstractBoard implements BoardInterface {
 
             final GamePieceInterface gamePiece = getBoard().get(to).getGamePiece();
             final FieldInterface field = getBoard().stream()
-                    .filter(x -> x.getType().equals(FieldType.getInitType(gamePiece.color())) && x.getGamePiece() == null)
+                    .filter(x -> x.getType().equals(FieldType.getInitType(gamePiece.getColor())) && x.getGamePiece() == null)
                     .findFirst()
                     .get();
 

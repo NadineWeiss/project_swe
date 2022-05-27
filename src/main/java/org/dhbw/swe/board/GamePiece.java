@@ -12,7 +12,7 @@ public final class GamePiece implements GamePieceInterface{
     }
 
     @Override
-    public Color color() {
+    public Color getColor() {
         return this.color;
     }
 

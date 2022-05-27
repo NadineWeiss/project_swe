@@ -24,7 +24,7 @@ public class ControlMechanismFour extends AbstractControlMechanism {
     public Optional<Integer> calculateMove(int fieldIndex, final List<FieldInterface> board, int dice) {
 
         GamePieceInterface currentGamePiece = board.get(fieldIndex).getGamePiece();
-        Map<GamePieceInterface, Integer> possibleMoves = calculateMoves(currentGamePiece.color(), board, dice);
+        Map<GamePieceInterface, Integer> possibleMoves = calculateMoves(currentGamePiece.getColor(), board, dice);
 
         for(Map.Entry<GamePieceInterface, Integer> move : possibleMoves.entrySet()){
 
@@ -135,7 +135,7 @@ public class ControlMechanismFour extends AbstractControlMechanism {
         FieldInterface targetField = board.get(targetPosition);
 
         boolean targetFieldNotOccupied = targetField.getGamePiece() != null
-                && !targetField.getGamePiece().color().equals(color);
+                && !targetField.getGamePiece().getColor().equals(color);
         boolean targetFieldEmpty = targetField.getGamePiece() == null;
 
         return targetFieldNotOccupied || targetFieldEmpty;
@@ -167,7 +167,7 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
         return board.stream()
                 .filter(x -> x.getType().equals(FieldType.getStartType(color)))
-                .anyMatch(x -> x.getGamePiece() != null && x.getGamePiece().color().equals(color));
+                .anyMatch(x -> x.getGamePiece() != null && x.getGamePiece().getColor().equals(color));
 
     }
 
@@ -188,7 +188,7 @@ public class ControlMechanismFour extends AbstractControlMechanism {
 
         return board.stream()
                 .filter(x -> x.getGamePiece() != null)
-                .filter(x -> x.getGamePiece().color().equals(color))
+                .filter(x -> x.getGamePiece().getColor().equals(color))
                 .map(x -> board.indexOf(x))
                 .map(x -> Graph.INSTANCE.four.get(x))
                 .collect(Collectors.toList());

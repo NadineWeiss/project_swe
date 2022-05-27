@@ -14,7 +14,7 @@ public class Algorithm {
     public void calculateMove(Color color, Map<GamePieceInterface, Integer> possibleMoves, List<FieldInterface> field) {
 
         Map<GamePieceInterface, Integer> gamePieces = possibleMoves.entrySet().stream()
-                .filter(x -> x.getKey().color().equals(color))
+                .filter(x -> x.getKey().getColor().equals(color))
                 .collect(Collectors.toMap(x -> x.getKey(), x -> x.getValue()));
 
         int randomIndex = new Random().nextInt(gamePieces.size());

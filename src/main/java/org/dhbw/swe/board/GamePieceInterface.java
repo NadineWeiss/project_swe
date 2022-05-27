@@ -4,6 +4,6 @@ import java.awt.*;
 
 public interface GamePieceInterface {
 
-    Color color();
+    Color getColor();
 
 }

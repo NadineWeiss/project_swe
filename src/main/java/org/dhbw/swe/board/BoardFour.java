@@ -56,7 +56,7 @@ public class BoardFour extends AbstractBoard{
 
             if(fieldInterface.containsGamePiece()){
 
-                result.add(Optional.ofNullable(fieldInterface.getGamePiece().color()));
+                result.add(Optional.ofNullable(fieldInterface.getGamePiece().getColor()));
 
             }else{
 
@@ -77,7 +77,7 @@ public class BoardFour extends AbstractBoard{
 
         for(FieldInterface field : board){
 
-            if(field.getGamePiece() != null && field.getGamePiece().color().equals(color)){
+            if(field.getGamePiece() != null && field.getGamePiece().getColor().equals(color)){
 
                 positions.add(this.board.indexOf(field));
 
