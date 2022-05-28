@@ -100,11 +100,9 @@ public class PlayerIO {
             e.printStackTrace();
         }
 
-        System.out.println(json);
-
         json = addPlayerToJSON(json, player, false);
 
-        return json;
+        return json.substring(json.indexOf("{"));
 
     }
 
@@ -131,8 +129,6 @@ public class PlayerIO {
         playerJSON= addStringParameterToJSON(playerJSON, "winCount", winCount);
 
         json = appendPlayer(json, playerJSON, firstPlayer);
-
-        System.out.println(json);
 
         return json;
 

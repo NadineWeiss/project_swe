@@ -30,7 +30,7 @@ public class GameFrame extends JFrame implements Observable {
     private List<Observer> observers = new ArrayList<>();
     private Color turnColor;
 
-    public GameFrame() throws HeadlessException {
+    public GameFrame() {
 
         btnNewDice.addActionListener(e -> {
 
@@ -220,12 +220,6 @@ public class GameFrame extends JFrame implements Observable {
         this.revalidate();
         this.repaint();
 
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
     }
 
     private ActionListener clicked = e -> {
@@ -413,13 +407,13 @@ public class GameFrame extends JFrame implements Observable {
 
     private Color getRGB(Color color){
 
-        if(color == Color.RED){
+        if(color.equals(Color.RED)){
             return new Color(229, 132, 132);
         }
-        if(color == Color.BLUE){
+        if(color.equals(Color.BLUE)){
             return new Color(130, 148, 252);
         }
-        if(color == Color.GREEN){
+        if(color.equals(Color.GREEN)){
             return new Color(122, 226, 117);
         }
         return new Color(254, 247, 150);
@@ -470,5 +464,4 @@ public class GameFrame extends JFrame implements Observable {
         observers.forEach(x -> x.update(observerContext));
 
     }
-
 }

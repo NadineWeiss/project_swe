@@ -38,7 +38,6 @@ public class PlayerDialog extends JDialog implements ActionListener {
         panelBtn.add(btnOK);
         panel.add(panelBtn);
 
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         add(panel);
         setSize(800, 500);
 
