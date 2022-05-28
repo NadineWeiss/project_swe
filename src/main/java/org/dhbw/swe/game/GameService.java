@@ -51,12 +51,14 @@ public class GameService implements Observer{
 
     private void newGame() {
 
-        final int playerNumber = gameVisualization.getPlayerNumber();
-        final int algoNumber = gameVisualization.getAlgoNumber(playerNumber);
+        int playerNumber = gameVisualization.getPlayerNumber();
+        int algoNumber = gameVisualization.getAlgoNumber(playerNumber);
+        List<Player> players = getPlayerNames(playerNumber - algoNumber);
 
         final BoardInterface board = BoardInterface.initBoardInterface(4);
         board.initBoard(playerNumber);
         gameParameter = new GameParameter(board, Color.RED, playerNumber);
+        gameParameter.setPlayerColors(players);
 
         if (algoNumber == 3) {
             gameParameter.setAlgoColors(Arrays.asList(Color.GREEN, Color.YELLOW, Color.BLUE));
@@ -73,6 +75,7 @@ public class GameService implements Observer{
 
         gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
+        gameVisualization.setPlayerNames(gameParameter.getPlayerNameColors(), gameParameter.getAlgoColors());
 
     }
 
@@ -87,6 +90,7 @@ public class GameService implements Observer{
 
         gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
+        gameVisualization.setPlayerNames(gameParameter.getPlayerNameColors(), gameParameter.getAlgoColors());
 
     }
 
@@ -187,6 +191,42 @@ public class GameService implements Observer{
             gameVisualization.setTurn(gameParameter.getTurn(), false);
 
         }
+    }
+
+    private List<Player> getPlayerNames(int playerNumber) {
+
+        List<Player> existingPlayers = PlayerIO.loadPlayers();
+        List<String> existingPlayerIds = new ArrayList<>();
+        for(Player player: existingPlayers){
+            existingPlayerIds.add(player.getId());
+        }
+
+        Map<String, Boolean> playerMap = gameVisualization.getPlayers(playerNumber, existingPlayerIds);
+
+        List<Player> players = new ArrayList<>();
+
+        for(Map.Entry<String, Boolean> entry : playerMap.entrySet()){
+
+            if(entry.getValue()){
+
+                Player player = new Player(entry.getKey());
+                PlayerIO.savePlayer(player);
+
+                players.add(player);
+
+            }else{
+
+                int index = existingPlayerIds.indexOf(entry.getKey());
+                Player player = existingPlayers.get(index);
+
+                players.add(player);
+
+            }
+
+        }
+
+        return players;
+
     }
 
     private List<Color> getCurrentColors(){

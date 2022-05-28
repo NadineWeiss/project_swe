@@ -51,6 +51,22 @@ public class GameIO {
 
     }
 
+    public static List<String> getFileNames(){
+
+        try {
+            return Files.walk(Paths.get(""), 1)
+                    .filter(x -> x.getFileName().toString().endsWith(".json"))
+                    .filter(x -> !x.getFileName().toString().equals("players.json"))
+                    .map(x -> x.getFileName().toString())
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
+
+    }
+
     private static String createJSON(GameParameter gameParameter){
 
         String json = newJsonObject();
@@ -61,6 +77,8 @@ public class GameIO {
                 .map(x -> Integer.toString(x.getRGB()))
                 .collect(Collectors.toList());
         json = addStringListParameterToJSON(json, "AlgoColors", algoColors);
+
+        json = addPlayersToJSON(json, gameParameter);
 
         List<Integer> redPositions = gameParameter.getBoard().getGamePiecePositions(Color.RED);
         json = addIntegerListParameterToJSON(json, "RedGamePiecePositions", redPositions);
@@ -78,6 +96,30 @@ public class GameIO {
 
     }
 
+    private static String addPlayersToJSON(String json, GameParameter gameParameter) {
+
+        for(Map.Entry<Player, Color> entry : gameParameter.getPlayerColors().entrySet()){
+
+            String id = entry.getKey().getId();
+            String name = "Player";
+
+            if(entry.getValue().equals(Color.RED))
+                name += "Red";
+            else if(entry.getValue().equals(Color.YELLOW))
+                name += "Yellow";
+            else if(entry.getValue().equals(Color.GREEN))
+                name += "Green";
+            else
+                name += "Blue";
+
+            json = addStringParameterToJSON(json, name, id);
+
+        }
+
+        return json;
+
+    }
+
     private static String getDateTime(){
 
         Date date = new Date();
@@ -89,7 +131,7 @@ public class GameIO {
 
     private static GameParameter transformParameters(Map<String, Object> parameters){
 
-        int playerNumber = Integer.valueOf(parameters.get("PlayerNumber").toString());
+        int playerNumber = Integer.parseInt(parameters.get("PlayerNumber").toString());
         Color turn = new Color(Integer.parseInt(parameters.get("TurnColor").toString()));
 
         List<Color> algoColors = new ArrayList<>();
@@ -115,14 +157,45 @@ public class GameIO {
 
         for(int i = 3; i >= 0; i--){
 
-            board.makeMove(0 + i, redPositions.get(i));
+            board.makeMove(i, redPositions.get(i));
             board.makeMove(4 + i, yellowPositions.get(i));
             board.makeMove(8 + i, greenPositions.get(i));
             board.makeMove(12 + i, bluePositions.get(i));
 
         }
 
-        return new GameParameter(board, turn, playerNumber, algoColors);
+        GameParameter gameParameter = new GameParameter(board, turn, playerNumber, algoColors);
+        gameParameter.setPlayerColors(getPlayerColors(parameters));
+
+
+        return gameParameter;
+
+    }
+
+    private static Map<Player, Color> getPlayerColors(Map<String, Object> parameters) {
+
+        List<Player> players = PlayerIO.loadPlayers();
+        Map<Player, Color> playerMap = new HashMap<>();
+
+        if(parameters.containsKey("PlayerRed")){
+            Player player = players.stream().filter(x -> x.getId().equals(parameters.get("PlayerRed"))).findFirst().get();
+            playerMap.put(player, Color.RED);
+        }
+        if(parameters.containsKey("PlayerYellow")){
+            Player player = players.stream().filter(x -> x.getId().equals(parameters.get("PlayerYellow"))).findFirst().get();
+            playerMap.put(player, Color.YELLOW);
+        }
+        if(parameters.containsKey("PlayerGreen")){
+            Player player = players.stream().filter(x -> x.getId().equals(parameters.get("PlayerGreen"))).findFirst().get();
+            playerMap.put(player, Color.GREEN);
+        }
+        if(parameters.containsKey("PlayerBlue")){
+            Player player = players.stream().filter(x -> x.getId().equals(parameters.get("PlayerBlue"))).findFirst().get();
+            playerMap.put(player, Color.BLUE);
+        }
+
+        return playerMap;
+
 
     }
 
@@ -160,20 +233,7 @@ public class GameIO {
 
     }
 
-    public static List<String> getFileNames(){
 
-        try {
-            return Files.walk(Paths.get(""), 1)
-                    .filter(x -> x.getFileName().toString().endsWith(".json"))
-                    .map(x -> x.getFileName().toString())
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new ArrayList<>();
-
-    }
 
     private static String newJsonObject(){
 

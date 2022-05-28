@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class GameFrame extends JFrame implements Observable {
@@ -160,6 +161,51 @@ public class GameFrame extends JFrame implements Observable {
 
         JOptionPane.showMessageDialog(this, "Farbe " + color.toString() + " hat gewonnen.",
                 "Glückwunsch :)", JOptionPane.INFORMATION_MESSAGE);
+
+    }
+
+    public Map<String, Boolean> getPlayers(int playerNumber, List<String> playerSelection) {
+
+        //False entspricht id
+        return new PlayerDialog(this, playerNumber, playerSelection).run();
+
+    }
+
+    public void setPlayerNames(Map<String, Color> playerNames, List<Color> algoColors){
+
+        JPanel panelNames = new JPanel();
+        FlowLayout flowLayout = new FlowLayout();
+        panelNames.setLayout(flowLayout);
+
+        for(Map.Entry<String, Color> entry : playerNames.entrySet()){
+
+            JLabel lbl = new JLabel();
+            lbl.setText(entry.getKey());
+            Font font = new Font("SansSerif", Font.BOLD, 20);
+            lbl.setFont(font);
+            JPanel lblPanel = new JPanel();
+            lblPanel.setBackground(getRGB(entry.getValue()));
+            lblPanel.add(lbl);
+
+            panelNames.add(lblPanel);
+
+        }
+
+        for(Color color : algoColors){
+
+            JLabel lbl = new JLabel();
+            lbl.setText("Algorithmus");
+            Font font = new Font("SansSerif", Font.BOLD, 20);
+            lbl.setFont(font);
+            JPanel lblPanel = new JPanel();
+            lblPanel.setBackground(getRGB(color));
+            lblPanel.add(lbl);
+
+            panelNames.add(lblPanel);
+
+        }
+
+        panel.add(panelNames, BorderLayout.SOUTH);
 
     }
 
@@ -363,6 +409,21 @@ public class GameFrame extends JFrame implements Observable {
             return "FieldYellow.png";
         }
         return "FieldNeutral.png";
+    }
+
+    private Color getRGB(Color color){
+
+        if(color == Color.RED){
+            return new Color(229, 132, 132);
+        }
+        if(color == Color.BLUE){
+            return new Color(130, 148, 252);
+        }
+        if(color == Color.GREEN){
+            return new Color(122, 226, 117);
+        }
+        return new Color(254, 247, 150);
+
     }
 
     private int updateRow(Direction direction) {
