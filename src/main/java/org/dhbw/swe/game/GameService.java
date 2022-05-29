@@ -2,26 +2,38 @@ package org.dhbw.swe.game;
 
 import org.dhbw.swe.board.BoardInterface;
 import org.dhbw.swe.visualization.GameFrame;
+import org.dhbw.swe.visualization.GameFrameInterface;
+import org.dhbw.swe.visualization.GameFrameMock;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameService implements Observer{
 
-    private GameParameter gameParameter;
-    private GameFrame gameVisualization;
+    private GameParameterInterface gameParameter;
+    private GameFrameInterface gameVisualization;
     private int currentDice;
     private int moveFrom;
     private int moveTo;
     private int redice;
 
-    public GameService() {
+    public GameService(GameFrameInterface gameFrame) {
 
-        gameVisualization = new GameFrame();
-        gameVisualization.register(this);
+        gameVisualization = gameFrame;
+        ((GameFrame)gameVisualization).register(this);
 
         newGame();
+
+    }
+
+    public GameService(GameFrameInterface gameFrame, GameParameterInterface gameParameter){
+
+        gameVisualization = gameFrame;
+        ((GameFrameMock)gameVisualization).register(this);
+
+        this.gameParameter = gameParameter;
 
     }
 
@@ -41,7 +53,7 @@ public class GameService implements Observer{
             newGame();
         }
         else if (observerContext.getContext().equals(Context.SAVE)) {
-            GameIO.saveGame(gameParameter);
+            GameIO.saveGame((GameParameter) gameParameter);
         }
         else if (observerContext.getContext().equals(Context.LOAD)) {
             loadGame();
@@ -58,7 +70,6 @@ public class GameService implements Observer{
         final BoardInterface board = BoardInterface.initBoardInterface(4);
         board.initBoard(playerNumber);
         gameParameter = new GameParameter(board, Color.RED, playerNumber);
-        gameParameter.setPlayerColors(players);
 
         if (algoNumber == 3) {
             gameParameter.setAlgoColors(Arrays.asList(Color.GREEN, Color.YELLOW, Color.BLUE));
@@ -73,6 +84,8 @@ public class GameService implements Observer{
             gameParameter.setAlgoColors(new ArrayList<>());
         }
 
+        gameParameter.setPlayerColors(getPlayerColors(players, playerNumber, gameParameter.getAlgoColors()));
+
         gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
         gameVisualization.setPlayerNames(gameParameter.getPlayerNameColors(), gameParameter.getAlgoColors());
@@ -81,12 +94,12 @@ public class GameService implements Observer{
 
     private void loadGame(){
 
-        String fileName = gameVisualization.getSelectedFile(GameIO.getFileNames());
-        try{
-            gameParameter = GameIO.loadGame(fileName);
-        }catch(NullPointerException e){
+        List<String> filenames = GameIO.getFileNames();
+        if(filenames.isEmpty()) {
             return;
         }
+        String fileName = gameVisualization.getSelectedFile(filenames);
+        gameParameter = GameIO.loadGame(fileName);
 
         gameVisualization.newGame(gameParameter.getBoard().getColorBoard());
         gameVisualization.setTurn(gameParameter.getTurn(), false);
@@ -102,6 +115,10 @@ public class GameService implements Observer{
         final Color winner = gameParameter.getBoard().checkWin();
 
         if (winner != null) {
+            gameParameter.getPlayerColors().entrySet().stream()
+                    .filter(x -> x.getValue().equals(winner))
+                    .forEach(x -> x.getKey().addWin());
+            //Todo: update players.json
             gameVisualization.winner(winner);
             newGame();
         }
@@ -146,6 +163,10 @@ public class GameService implements Observer{
             final Color winner = gameParameter.getBoard().checkWin();
             if (winner != null) {
 
+                gameParameter.getPlayerColors().entrySet().stream()
+                        .filter(x -> x.getValue().equals(winner))
+                        .forEach(x -> x.getKey().addWin());
+                //Todo: update players.json
                 gameVisualization.winner(winner);
                 newGame();
 
@@ -229,6 +250,36 @@ public class GameService implements Observer{
 
     }
 
+    private Map<Player, Color> getPlayerColors(List<Player> players, int playerNumber, List<Color> algoColors){
+
+        Map<Player, Color> playerColors = new HashMap<>();
+        List<Color> colors = new ArrayList<>();
+
+        if (playerNumber >= 2) {
+            colors.add(Color.RED);
+            colors.add(Color.GREEN);
+        }
+        if (playerNumber >= 3) {
+            colors.add(Color.YELLOW);
+        }
+        if(playerNumber >= 4) {
+            colors.add(Color.BLUE);
+        }
+
+        colors = colors.stream()
+                .filter(x -> !algoColors.contains(x))
+                .collect(Collectors.toList());
+
+        for(int i = 0; i < colors.size(); i++){
+
+            playerColors.put(players.get(i), colors.get(i));
+
+        }
+
+        return playerColors;
+
+    }
+
     private List<Color> getCurrentColors(){
 
         List<Color> colors = Arrays.asList(Color.RED, Color.YELLOW, Color.GREEN, Color.BLUE);
@@ -243,4 +294,7 @@ public class GameService implements Observer{
 
     }
 
+    public GameParameterInterface getGameParameter() {
+        return gameParameter;
+    }
 }

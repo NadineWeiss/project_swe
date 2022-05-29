@@ -8,9 +8,9 @@ public interface FieldInterface {
 
     GamePieceInterface getGamePiece();
 
-    void setType(final FieldType fieldType);
+    void setType(final FieldType type);
 
-    void setGamePiece(final GamePieceInterface gamePieceInterface);
+    void setGamePiece(final GamePieceInterface gamePiece);
 
     boolean containsGamePiece();
 

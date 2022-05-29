@@ -11,7 +11,7 @@ public class Algorithm {
     private int moveFrom;
     private int moveTo;
 
-    public void calculateMove(Color color, Map<GamePieceInterface, Integer> possibleMoves, List<FieldInterface> field) {
+    public void calculateMove(Color color, Map<GamePieceInterface, Integer> possibleMoves, List<FieldInterface> board) {
 
         Map<GamePieceInterface, Integer> gamePieces = possibleMoves.entrySet().stream()
                 .filter(x -> x.getKey().getColor().equals(color))
@@ -20,10 +20,10 @@ public class Algorithm {
         int randomIndex = new Random().nextInt(gamePieces.size());
 
         GamePieceInterface originalGamePiece = (GamePieceInterface) gamePieces.keySet().toArray()[randomIndex];
-        for(FieldInterface fieldInterface : field){
+        for(FieldInterface fieldInterface : board){
 
             if(fieldInterface.containsGamePiece() && fieldInterface.getGamePiece().equals(originalGamePiece))
-                moveFrom = field.indexOf(fieldInterface);
+                moveFrom = board.indexOf(fieldInterface);
 
         }
 

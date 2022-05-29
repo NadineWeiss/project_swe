@@ -12,11 +12,10 @@ import java.util.Optional;
 public class BoardFour extends AbstractBoard{
 
     private List<FieldInterface> board;
-    //private ControlMechanismInterface controlMechanismInterface;
 
-    public BoardFour() {
+    public BoardFour(ControlMechanismInterface controlMechanism) {
 
-        controlMechanismInterface = new ControlMechanismFour();
+        controlMechanismInterface = controlMechanism;
 
     }
 

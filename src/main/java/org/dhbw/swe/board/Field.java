@@ -17,18 +17,22 @@ public class Field implements FieldInterface{
         this.gamePiece = gamePiece;
     }
 
+    @Override
     public FieldType getType() {
         return this.type;
     }
 
+    @Override
     public GamePieceInterface getGamePiece() {
         return this.gamePiece;
     }
 
+    @Override
     public void setType(final FieldType type) {
         this.type = type;
     }
 
+    @Override
     public void setGamePiece(final GamePieceInterface gamePiece) {
         this.gamePiece = gamePiece;
     }

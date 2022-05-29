@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class GameFrame extends JFrame implements Observable {
+public class GameFrame extends JFrame implements Observable, GameFrameInterface {
 
     private List<FieldButton> btns = new ArrayList<>();
     private DiceButton btnNewDice = new DiceButton();
@@ -57,62 +57,6 @@ public class GameFrame extends JFrame implements Observable {
         add(panel);
         setSize(800, 900);
         setVisible(true);
-
-    }
-
-    public JPanel setPanelBoard(){
-
-        btns.clear();
-
-        panelBoard.setLayout(new GridLayout(11, 11));
-
-        for(int i = 0; i < 121; i++){
-            JPanel p = new JPanel();
-            p.setBackground(new Color(127, 127, 127));
-            panelBoard.add(p);
-        }
-
-        addInitFields(panelBoard, Graph.INSTANCE.four.subList(0, 16));
-        addRemainigFields(panelBoard);
-        addTargetFields(panelBoard, Graph.INSTANCE.four.subList(56, 72));
-
-        return panelBoard;
-
-    }
-
-    public JPanel setPanelCoordinate(){
-
-        JPanel panelCoordinate = new JPanel();
-        panelCoordinate.setLayout(new BorderLayout());
-
-        JPanel panelMenu = new JPanel();
-        panelMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JButton newGameBtn = new JButton("Neues Spiel");
-        newGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.NEW)));
-        newGameBtn.setFocusPainted(false);
-        panelMenu.add(newGameBtn);
-
-        JButton saveGameBtn = new JButton("Spiel speichern");
-        saveGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.SAVE)));
-        saveGameBtn.setFocusPainted(false);
-        panelMenu.add(saveGameBtn);
-
-        JButton loadGameBtn = new JButton("Spiel laden");
-        loadGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.LOAD)));
-        loadGameBtn.setFocusPainted(false);
-        panelMenu.add(loadGameBtn);
-
-        JPanel panelDice = new JPanel();
-        panelDice.add(btnNewDice);
-        panelDice.add(btnPreviousDice);
-        btnPreviousDice.setClickable(false);
-        btnPreviousDice.setColor(Color.RED);
-
-        panelCoordinate.add(panelMenu, BorderLayout.NORTH);
-        panelCoordinate.add(panelDice, BorderLayout.CENTER);
-
-        return panelCoordinate;
 
     }
 
@@ -159,7 +103,7 @@ public class GameFrame extends JFrame implements Observable {
 
     public void winner(Color color){
 
-        JOptionPane.showMessageDialog(this, "Farbe " + color.toString() + " hat gewonnen.",
+        JOptionPane.showMessageDialog(this, "Farbe " + getColorName(color) + " hat gewonnen.",
                 "Glückwunsch :)", JOptionPane.INFORMATION_MESSAGE);
 
     }
@@ -222,30 +166,6 @@ public class GameFrame extends JFrame implements Observable {
 
     }
 
-    private ActionListener clicked = e -> {
-
-        FieldButton btn = ((FieldButton)e.getSource());
-
-        if(btn.isClickable()){
-            if(btn.getPieceColor() != null && btn.getPieceColor().equals(turnColor)){
-
-                btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
-                btn.setBackgroundImage(true);
-
-                int fieldIndex = ((FieldButton) e.getSource()).getIndex();
-                notifyObservers(new ObserverContext(Context.CALCULATE, Optional.of(fieldIndex)));
-
-            }else{
-
-                btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
-
-                notifyObservers(new ObserverContext(Context.MOVE));
-
-            }
-        }
-
-    };
-
     public void markAdditionalField(int index){
 
         btns.get(index).setBackgroundImage(true);
@@ -283,6 +203,86 @@ public class GameFrame extends JFrame implements Observable {
 
         panelBoard.revalidate();
         panelBoard.repaint();
+
+    }
+
+    private ActionListener clicked = e -> {
+
+        FieldButton btn = ((FieldButton)e.getSource());
+
+        if(btn.isClickable()){
+            if(btn.getPieceColor() != null && btn.getPieceColor().equals(turnColor)){
+
+                btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
+                btn.setBackgroundImage(true);
+
+                int fieldIndex = ((FieldButton) e.getSource()).getIndex();
+                notifyObservers(new ObserverContext(Context.CALCULATE, Optional.of(fieldIndex)));
+
+            }else{
+
+                btns.parallelStream().forEach(x -> x.setBackgroundImage(false));
+
+                notifyObservers(new ObserverContext(Context.MOVE));
+
+            }
+        }
+
+    };
+
+    private JPanel setPanelBoard(){
+
+        btns.clear();
+
+        panelBoard.setLayout(new GridLayout(11, 11));
+
+        for(int i = 0; i < 121; i++){
+            JPanel p = new JPanel();
+            p.setBackground(new Color(127, 127, 127));
+            panelBoard.add(p);
+        }
+
+        addInitFields(panelBoard, Graph.INSTANCE.four.subList(0, 16));
+        addRemainigFields(panelBoard);
+        addTargetFields(panelBoard, Graph.INSTANCE.four.subList(56, 72));
+
+        return panelBoard;
+
+    }
+
+    private JPanel setPanelCoordinate(){
+
+        JPanel panelCoordinate = new JPanel();
+        panelCoordinate.setLayout(new BorderLayout());
+
+        JPanel panelMenu = new JPanel();
+        panelMenu.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+        JButton newGameBtn = new JButton("Neues Spiel");
+        newGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.NEW)));
+        newGameBtn.setFocusPainted(false);
+        panelMenu.add(newGameBtn);
+
+        JButton saveGameBtn = new JButton("Spiel speichern");
+        saveGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.SAVE)));
+        saveGameBtn.setFocusPainted(false);
+        panelMenu.add(saveGameBtn);
+
+        JButton loadGameBtn = new JButton("Spiel laden");
+        loadGameBtn.addActionListener(e -> notifyObservers(new ObserverContext(Context.LOAD)));
+        loadGameBtn.setFocusPainted(false);
+        panelMenu.add(loadGameBtn);
+
+        JPanel panelDice = new JPanel();
+        panelDice.add(btnNewDice);
+        panelDice.add(btnPreviousDice);
+        btnPreviousDice.setClickable(false);
+        btnPreviousDice.setColor(Color.RED);
+
+        panelCoordinate.add(panelMenu, BorderLayout.NORTH);
+        panelCoordinate.add(panelDice, BorderLayout.CENTER);
+
+        return panelCoordinate;
 
     }
 
@@ -417,6 +417,21 @@ public class GameFrame extends JFrame implements Observable {
             return new Color(122, 226, 117);
         }
         return new Color(254, 247, 150);
+
+    }
+
+    private String getColorName(Color color){
+
+        if(color.equals(Color.RED)){
+            return "Rot";
+        }
+        if(color.equals(Color.BLUE)){
+            return "Blau";
+        }
+        if(color.equals(Color.GREEN)){
+            return "Grün";
+        }
+        return "Gelb";
 
     }
 

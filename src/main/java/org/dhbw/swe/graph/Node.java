@@ -50,6 +50,12 @@ public class Node {
         return this.edges.stream().filter(x -> !x.isDefaultDir()).findFirst().get();
     }
 
+    public boolean hasSpecialEdge(){
+
+        return this.edges.stream().anyMatch(x -> !x.isDefaultDir());
+
+    }
+
     @Override
     public String toString() {
         return "Node{" +

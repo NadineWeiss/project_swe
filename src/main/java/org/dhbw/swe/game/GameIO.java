@@ -59,7 +59,9 @@ public class GameIO {
                     .filter(x -> !x.getFileName().toString().equals("players.json"))
                     .map(x -> x.getFileName().toString())
                     .collect(Collectors.toList());
-        } catch (IOException e) {
+        }/*catch(ArrayIndexOutOfBoundsException e){
+          return new ArrayList<>();
+        }*/ catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -157,10 +159,16 @@ public class GameIO {
 
         for(int i = 3; i >= 0; i--){
 
-            board.makeMove(i, redPositions.get(i));
-            board.makeMove(4 + i, yellowPositions.get(i));
-            board.makeMove(8 + i, greenPositions.get(i));
-            board.makeMove(12 + i, bluePositions.get(i));
+            if (playerNumber >= 2) {
+                board.makeMove(i, redPositions.get(i));
+                board.makeMove(8 + i, greenPositions.get(i));
+            }
+            if (playerNumber >= 3) {
+                board.makeMove(4 + i, yellowPositions.get(i));
+            }
+            if(playerNumber >= 4) {
+                board.makeMove(12 + i, bluePositions.get(i));
+            }
 
         }
 
@@ -195,7 +203,6 @@ public class GameIO {
         }
 
         return playerMap;
-
 
     }
 

@@ -27,7 +27,7 @@ public interface BoardInterface{
 
         if(maxPlayers == 4){
 
-            return new BoardFour();
+            return new BoardFour(new ControlMechanismFour());
 
         }
 

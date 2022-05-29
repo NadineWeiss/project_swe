@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameParameter {
+public class GameParameter implements GameParameterInterface{
 
     private BoardInterface board;
     private Color turn;
@@ -15,7 +15,7 @@ public class GameParameter {
     private List<Color> algoColors;
     private Map<Player, Color> playerColors;
 
-    public GameParameter(final BoardInterface board, final Color turn, final int playerNumber) {
+    public GameParameter(BoardInterface board, Color turn, int playerNumber) {
         this.board = board;
         this.turn = turn;
         this.playerNumber = playerNumber;
@@ -78,33 +78,6 @@ public class GameParameter {
         }
 
         return playerNameColors;
-
-    }
-
-    public void setPlayerColors(List<Player> players) {
-
-        Map<Player, Color> playerColors = new HashMap<>();
-
-        if (players.size() == 1) {
-            playerColors.put(players.get(0), Color.RED);
-        }
-        else if (players.size() == 2) {
-            playerColors.put(players.get(0), Color.RED);
-            playerColors.put(players.get(1), Color.BLUE);
-        }
-        else if (players.size() == 3) {
-            playerColors.put(players.get(0), Color.RED);
-            playerColors.put(players.get(1), Color.YELLOW);
-            playerColors.put(players.get(2), Color.BLUE);
-        }
-        else {
-            playerColors.put(players.get(0), Color.RED);
-            playerColors.put(players.get(1), Color.YELLOW);
-            playerColors.put(players.get(2), Color.GREEN);
-            playerColors.put(players.get(3), Color.BLUE);
-        }
-
-        this.playerColors = playerColors;
 
     }
 
